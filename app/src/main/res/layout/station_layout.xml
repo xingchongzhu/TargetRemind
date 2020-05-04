@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/current_station"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/search_height"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/search_edittext_shape_top"
+        android:drawableLeft="@drawable/start_green_route"
+        android:drawablePadding="5dp"
+        android:gravity="center_vertical"
+        android:hint="@string/current_location"
+        android:textColor="@color/blue"
+        android:textSize="28px" />
+
+
+    <TextView
+        android:id="@+id/target_station"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/search_height"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/search_edittext_shape_bottom"
+        android:drawableLeft="@drawable/end_red_route"
+        android:drawablePadding="5dp"
+        android:gravity="center_vertical"
+        android:hint="目标站"
+        android:textColor="@color/blue"
+        android:textSize="28px" />
+
+</LinearLayout>
