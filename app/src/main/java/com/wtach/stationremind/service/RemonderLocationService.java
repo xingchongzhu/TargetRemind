@@ -11,10 +11,17 @@ import android.util.Log;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
+import com.baidu.location.BDNotifyListener;
+import com.baidu.location.LocationClient;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.sug.SuggestionResult;
+import com.wtach.stationremind.AlarmActivity;
 import com.wtach.stationremind.LocationApplication;
+import com.wtach.stationremind.R;
 import com.wtach.stationremind.listener.LocationChangerListener;
 import com.wtach.stationremind.model.item.bean.StationInfo;
 import com.wtach.stationremind.object.NotificationObject;
+import com.wtach.stationremind.utils.CommonConst;
 import com.wtach.stationremind.utils.CommonFuction;
 import com.wtach.stationremind.utils.NotificationUtil;
 import com.wtach.stationremind.utils.NotificationUtils;
@@ -37,18 +44,19 @@ public class RemonderLocationService extends Service {
     /**
      * 回调
      */
-    private Callback callback;
+    private ArrivedCallback mArrivedCallback;
     private LocationChangerListener mLocationChangerListener;
     public static boolean state = false;
 
     BDLocation currentLocation;
 
-    private NotificationUtil mNotificationUtil;
     private boolean isReminder = false;
     private boolean locationServiceHasStart = false;
-    StationInfo nextStation, currentStation,preStation;
-    private List<StationInfo> needChangeStationList;
 
+    private SuggestionResult.SuggestionInfo mTargetStation;
+    //位置提醒
+    public LocationClient mLocationClient = null;
+    public BDNotifyListener myListener = new MyNotifyListener();
 
     public IBinder onBind(Intent intent) {
         return updateBinder;
@@ -56,7 +64,7 @@ public class RemonderLocationService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        this.callback = null;
+        this.mArrivedCallback = null;
         return super.onUnbind(intent);
     }
 
@@ -74,8 +82,10 @@ public class RemonderLocationService extends Service {
         locationService = ((LocationApplication) getApplication()).locationService;
         // 获取locationservice实例，建议应用中只初始化1个location实例，然后使用，可以参考其他示例的activity，都是通过此种方式获取locationservice实例的
         locationService.registerListener(mListener);
-        mNotificationUtil = new NotificationUtil(this);
         //startForeground(NotificationUtil.arriveNotificationId,mNotificationUtil.arrivedNotification(getApplicationContext(),NotificationUtil.arriveNotificationId));
+        //声明LocationClient类
+        mLocationClient = new LocationClient(getApplicationContext());
+
     }
 
     public void setLocationChangerListener(LocationChangerListener locationChangerListener) {
@@ -98,8 +108,6 @@ public class RemonderLocationService extends Service {
      * 定位结果回调，重写onReceiveLocation方法，可以直接拷贝如下代码到自己工程中修改
      *
      */
-    int n = 0;
-    int number = 0;
     private BDAbstractLocationListener mListener = new BDAbstractLocationListener() {
         @Override
         public void onReceiveLocation(BDLocation location) {
@@ -120,65 +128,44 @@ public class RemonderLocationService extends Service {
         }
     };
 
-    private boolean isBacrground = false;
+    public void setStartReminder(SuggestionResult.SuggestionInfo targetStation){
+        //注册监听函数
+        mLocationClient.registerNotify(myListener);
+        this.mTargetStation = targetStation;
+        //设置位置提醒，四个参数分别是：纬度、经度、半径、坐标类型
+        LatLng latLng = mTargetStation.getPt();
+        myListener.SetNotifyLocation(latLng.latitude, latLng.longitude, CommonConst.TARGETRANGE, mLocationClient.getLocOption().getCoorType());
+        //mLocationClient为第二步初始化过的LocationClient对象
+        //调用LocationClient的start()方法，开启定位
+        mLocationClient.start();
 
-    public boolean moveTaskToBack() {
-        isBacrground = true;
-        Log.d(TAG, "moveTaskToBack isRemind = " + isReminder);
-        if (isReminder) {
-            NotificationObject mNotificationObject = NotificationUtils.createNotificationObject(getApplicationContext(), currentStation, nextStation);
-            setNotification(mNotificationObject);
-        }
-        return true;
-    }
-
-    public void moveInForeground(){
-        isBacrground = false;
-    }
-
-    public void setNotification(NotificationObject mNotificationObject) {
-        //保持cpu一直运行，不管屏幕是否黑屏
-        Notification mNotification = mNotificationUtil.showNotification(getApplicationContext(),
-                NotificationUtil.notificationId, mNotificationObject);
-        //startForeground(NotificationUtil.notificationId,mNotification);
-        locationService.getLocationClient().enableLocInForeground(NotificationUtil.notificationId,mNotification);
-    }
-
-    public void updataNotification(NotificationObject mNotificationObject) {
-        locationService.getLocationClient().enableLocInForeground(NotificationUtil.notificationId,
-               mNotificationUtil.updateProgress(getApplicationContext(), NotificationUtil.notificationId, mNotificationObject));
-        //mNotificationUtil.updateProgress(getApplicationContext(), NotificationUtil.notificationId, mNotificationObject);
     }
 
     public void setCancleReminder() {
         isReminder = false;
         stopForeground(true);
-        if (mNotificationUtil != null)
-            mNotificationUtil.cancel(NotificationUtil.notificationId);
+        //myListener为第二步中定义过的BDNotifyListener对象
+        //调用执行removeNotifyEvent方法，即可实现取消监听
+        mLocationClient.removeNotifyEvent(myListener);
+
         locationService.getLocationClient().disableLocInForeground(true);// 关闭前台定位，同时移除通知栏
     }
 
-    public void cancleNotification() {
-        stopForeground(true);
-        if (mNotificationUtil != null) {
-            mNotificationUtil.cancel(NotificationUtil.notificationId);
-        }
-        locationService.getLocationClient().disableLocInForeground(true);// 关闭前台定位，同时移除通知栏
-    }
 
     /**
      * 回调接口
      *
      * @author lenovo
      */
-    public static interface Callback {
-        void setCurrentStation(String startCname, String endName, String current);
+    public static interface ArrivedCallback {
 
-        void arriaved(boolean state);
-
-        void loactionStation(BDLocation location);
+        void arriaved(BDLocation mlocation, float distance);
 
         void errorHint(String error);
+    }
+
+    public void setArrivedCallback(ArrivedCallback mArrivedCallback) {
+        this.mArrivedCallback = mArrivedCallback;
     }
 
     /**
@@ -194,6 +181,28 @@ public class RemonderLocationService extends Service {
         }
         setCancleReminder();
         Log.d(TAG, "onDestroy ");
+    }
+
+    public class MyNotifyListener extends BDNotifyListener {
+        public void onNotify(BDLocation mlocation, float distance){
+            if(mArrivedCallback != null){
+                mArrivedCallback.arriaved(mlocation,distance);
+            }
+            sendHint(RemonderLocationService.this,true,getString(R.string.arrived_reminder),"","");
+            setCancleReminder();
+            //已到达设置监听位置附近
+            Log.d(TAG,"onNotify 已到达设置监听位置附近 distance = "+distance+" "+mlocation.getAddress());
+        }
+    }
+
+    public static void sendHint(Context context, boolean isArrive, String title, String content, String change) {
+        Intent intent = new Intent(context, AlarmActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("arrive", isArrive);
+        intent.putExtra("title", title);
+        intent.putExtra("content", content);
+        intent.putExtra("change", change);
+        context.startActivity(intent);
     }
 
 }

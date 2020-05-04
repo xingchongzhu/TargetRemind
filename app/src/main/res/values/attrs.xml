@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ScrollLayout">
+
+        <attr name="minOffset" format="dimension" />
+
+        <attr name="maxOffset" format="dimension" />
+
+        <attr name="exitOffset" format="dimension" />
+
+        <attr name="mode">
+            <flag name="open" value="0x0" />
+            <flag name="close" value="0x1" />
+            <flag name="exit" value="0x2" />
+        </attr>
+
+        <attr name="allowHorizontalScroll" format="boolean"/>
+
+        <attr name="isSupportExit" format="boolean"/>
+
+    </declare-styleable>
+
+    <declare-styleable name="CircleView">
+        <!-- Sets the center/radius of the circle relative to the view's bounds. -->
+        <attr name="android:gravity" />
+        <!-- The ARGB fill color of the circle. -->
+        <attr name="fillColor" format="color" />
+        <!-- The center x-coordinate of the circle. -->
+        <attr name="centerX" format="dimension" />
+        <!-- The center y-coordinate of the circle. -->
+        <attr name="centerY" format="dimension" />
+        <!-- The radius of the circle. -->
+        <attr name="radius" format="dimension" />
+    </declare-styleable>
+
+    <!-- 自定义的属性-->
+    <declare-styleable name="Item">
+        <attr name="umtitle" format="string" />
+        <attr name="umicon" format="integer" />
+    </declare-styleable>
+    <declare-styleable name="Tab">
+        <attr name="umname" format="string" />
+    </declare-styleable>
+    <declare-styleable name="Function">
+        <attr name="umfuncname" format="string" />
+        <attr name="umfuncdesc" format="string" />
+    </declare-styleable>
+    <declare-styleable name="FunctionTitle">
+        <attr name="umfunctitle" format="string" />
+
+    </declare-styleable>
+</resources>

@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.heytap.wearable.support.recycler.widget.RecyclerView;
 import com.wtach.stationremind.R;
 import com.wtach.stationremind.listener.OnRecyItemClickListener;
@@ -17,6 +18,7 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
 
     public static final int CityItemViewType = 1;
     public static final int StationItemViewType = 2;
+    public static final int SugInfoItemViewType = 3;
     private List<Object> list;
 
     private OnRecyItemClickListener mOnRecyItemClickListener;
@@ -26,6 +28,14 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
 
     public List<Object> getList() {
         return list;
+    }
+
+    public void setData(List<Object> list){
+        if(this.list != null){
+            this.list.clear();
+        }
+        this.list = list;
+        notifyDataSetChanged();
     }
 
     public void setOnRecyItemClickListener(OnRecyItemClickListener mOnRecyItemClickListener) {
@@ -38,6 +48,8 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             return StationItemViewType;
         }else if (list.get(i) instanceof CityInfo){
             return CityItemViewType;
+        }else if (list.get(i) instanceof SuggestionResult.SuggestionInfo){
+            return SugInfoItemViewType;
         }else{
              return -1;
         }
@@ -53,6 +65,9 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             case CityItemViewType:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout, parent, false);
                 return new CityViewHolder(view);
+            case SugInfoItemViewType:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout, parent, false);
+                return new SugViewHolder(view);
                 default:
         }
         return null;
@@ -64,6 +79,8 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             ((StationViewHolder) viewHolder).textView.setText(((StationInfo)list.get(position)).cname);
         }else if(viewHolder instanceof CityViewHolder){
             ((CityViewHolder) viewHolder).textView.setText(((CityInfo)list.get(position)).getCityName());
+        }if(viewHolder instanceof SugViewHolder){
+            ((SugViewHolder) viewHolder).textView.setText(((SuggestionResult.SuggestionInfo)list.get(position)).key);
         }
         if(mOnRecyItemClickListener != null){
             final View itemView =  viewHolder.itemView;
@@ -98,5 +115,15 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             textView = (TextView) view.findViewById(R.id.text);
         }
     }
+
+    static class SugViewHolder extends RecyclerView.ViewHolder {
+        TextView textView;
+
+        public SugViewHolder(View view) {
+            super(view);
+            textView = (TextView) view.findViewById(R.id.text);
+        }
+    }
+
 
 }

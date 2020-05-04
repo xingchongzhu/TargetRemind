@@ -11,4 +11,15 @@
     <dimen name="notif_station_size">12dp</dimen>
     <dimen name="notif_text_pad">5dp</dimen>
     <dimen name="margin_gap">3dp</dimen>
+
+    <dimen name="big_font_size">16sp</dimen>
+    <dimen name="alarm_lockscreen_pulse_radius">128dp</dimen>
+    <dimen name="alarm_lockscreen_alarm_horizontal_padding">16dp</dimen>
+    <dimen name="alarm_lockscreen_alarm_vertical_padding">48dp</dimen>
+    <dimen name="alarm_lockscreen_bottom_margin">25dp</dimen>
+    <dimen name="fab_alarm_size">56dp</dimen>
+    <dimen name="bottom_text_size">16dp</dimen>
+    <dimen name="alarm_info_font_size">25dp</dimen>
+    <dimen name="single_color_height">60dp</dimen>
+    <dimen name="line_color_height">110dp</dimen>
 </resources>

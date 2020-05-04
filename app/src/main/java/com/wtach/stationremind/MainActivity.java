@@ -16,12 +16,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
+import com.baidu.mapapi.search.sug.SuggestionResult;
+import com.heytap.wearable.support.widget.HeyShapeButton;
 import com.heytap.wearable.support.widget.HeySingleDefaultItem;
 import com.wtach.stationremind.database.DataManager;
 import com.wtach.stationremind.listener.LoadDataListener;
 import com.wtach.stationremind.listener.LocationChangerListener;
 import com.wtach.stationremind.model.item.bean.CityInfo;
 import com.wtach.stationremind.model.item.bean.StationInfo;
+import com.wtach.stationremind.recognize.RecogizeManager;
 import com.wtach.stationremind.service.LocationService;
 import com.wtach.stationremind.service.RemonderLocationService;
 import com.wtach.stationremind.utils.CommonConst;
@@ -34,9 +37,9 @@ import com.wtach.stationremind.utils.StartActivityUtils;
 import static com.wtach.stationremind.utils.CommonConst.REQUES_SEARCH_ACTIVITY_CITY_CODE;
 import static com.wtach.stationremind.utils.CommonConst.REQUES_SEARCH_ACTIVITY_END_STATION_CODE;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener, LoadDataListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener, LoadDataListener , RemonderLocationService.ArrivedCallback {
     private final String TAG = "MainActivity";
-    private View startRemindBtn;
+    private HeyShapeButton startRemindBtn;
     private HeySingleDefaultItem selectCity;
     private TextView targetStationView;
     private TextView currentStationView;
@@ -47,6 +50,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private RemonderLocationService mRemonderLocationService;
     public boolean hasLocation = false;
     private String currentCity = IDef.DEFAULTCITY;
+    private SuggestionResult.SuggestionInfo mTargetStation;
+    private boolean isStartRemind = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,13 +77,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         startRemindBtn.setOnClickListener(this);
         targetStationView.setOnClickListener(this);
         selectCity.setOnClickListener(this);
+
+        startRemindBtn.setEnabled(false);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.start_remind_btn:
-                mDataManager.loadData(this);
+                isStartRemind = !isStartRemind;
+                updateStartBtnState();
                 break;
             case R.id.target_station:
                 StartActivityUtils.startActivity(this,SearchActivity.class, REQUES_SEARCH_ACTIVITY_END_STATION_CODE,
@@ -87,8 +95,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             case R.id.select_city:
                 StartActivityUtils.startActivity(this,SearchActivity.class, REQUES_SEARCH_ACTIVITY_CITY_CODE,
                         CommonConst.ACTIVITY_SELECT_TYPE_KEY, REQUES_SEARCH_ACTIVITY_CITY_CODE);
-
                 break;
+        }
+    }
+
+    private void updateStartBtnState(){
+        if(!isStartRemind){
+            mRemonderLocationService.setCancleReminder();
+            startRemindBtn.setText(R.string.start_remind);
+        }else{
+            mRemonderLocationService.setStartReminder(mTargetStation);
+            startRemindBtn.setText(R.string.stop_remind);
         }
     }
 
@@ -110,15 +127,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case REQUES_SEARCH_ACTIVITY_END_STATION_CODE:
                 if(data != null) {
-                    result = data.getStringExtra(CommonConst.ACTIVITY_RESULT_SELECT_KEY);
-                    targetStationView.setText(result);
+                    mTargetStation= data.getParcelableExtra(CommonConst.ACTIVITY_RESULT_SELECT_KEY);
+                    if(mTargetStation != null) {
+                        targetStationView.setText(mTargetStation.key);
+                        startRemindBtn.setEnabled(true);
+                        isStartRemind = false;
+                    }
                 }
                 break;
         }
         Log.d(TAG,"onActivityResult result = "+result);
     }
-
-
 
     @Override
     public void loadFinish() {
@@ -159,6 +178,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             mUpdateBinder = (RemonderLocationService.UpdateBinder) service;
             mRemonderLocationService = mUpdateBinder.getService();
             if (mRemonderLocationService != null) {
+                mRemonderLocationService.setArrivedCallback(MainActivity.this);
                 if (mRemonderLocationService != null) {
                     mRemonderLocationService.startLocationService();
                 }
@@ -174,11 +194,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                                 setNewCity(tempCity);
                             }
                         }
-                        StationInfo nerstStationInfo = PathSerachUtil.getNerastNextStation(location, mDataManager.getLineInfoList());
-                        if(nerstStationInfo != null){
-                            currentStationView.setText(nerstStationInfo.cname);
+
+                        //StationInfo nerstStationInfo = PathSerachUtil.getNerastNextStation(location, mDataManager.getLineInfoList());
+                        if(location.getAddress() != null){
+                            currentStationView.setText(location.getAddress().address);
+                            Log.d(TAG,"loactionStation location = "+location+" location.getAddress().address = "+location.getAddress().address);
+
                         }
-                        Log.d(TAG,"loactionStation location = "+location+" nerstStationInfo = "+nerstStationInfo);
                         //for (LocationChangerListener locationChangerListener : locationChangerListenerList) {
                          //   locationChangerListener.loactionStation(location);
                        // }
@@ -204,4 +226,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         hasLocation = true;
     }
 
+    @Override
+    public void arriaved(BDLocation mlocation, float distance) {
+        isStartRemind = false;
+        updateStartBtnState();
+       // Toast.makeText(this,"已经到达目的地附件 "+mlocation.getAddress(),Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void errorHint(String error) {
+
+    }
 }
