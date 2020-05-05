@@ -5,9 +5,11 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -61,6 +63,7 @@ public class RemonderLocationService extends Service {
     public IBinder onBind(Intent intent) {
         return updateBinder;
     }
+    private Handler handler = new Handler();
 
     @Override
     public boolean onUnbind(Intent intent) {
@@ -133,12 +136,22 @@ public class RemonderLocationService extends Service {
         mLocationClient.registerNotify(myListener);
         this.mTargetStation = targetStation;
         //设置位置提醒，四个参数分别是：纬度、经度、半径、坐标类型
-        LatLng latLng = mTargetStation.getPt();
-        myListener.SetNotifyLocation(latLng.latitude, latLng.longitude, CommonConst.TARGETRANGE, mLocationClient.getLocOption().getCoorType());
-        //mLocationClient为第二步初始化过的LocationClient对象
-        //调用LocationClient的start()方法，开启定位
-        mLocationClient.start();
-
+        if(targetStation != null) {
+            LatLng latLng = mTargetStation.getPt();
+            if(latLng != null) {
+                myListener.SetNotifyLocation(latLng.latitude, latLng.longitude, CommonConst.TARGETRANGE, mLocationClient.getLocOption().getCoorType());
+                //mLocationClient为第二步初始化过的LocationClient对象
+                //调用LocationClient的start()方法，开启定位
+                mLocationClient.start();
+                isReminder = true;
+            }
+        }
+        if(!isReminder){
+            isReminder = false;
+            if(mArrivedCallback != null){
+                mArrivedCallback.errorHint(getString(R.string.start_remind_fail));
+            }
+        }
     }
 
     public void setCancleReminder() {
@@ -185,14 +198,17 @@ public class RemonderLocationService extends Service {
 
     public class MyNotifyListener extends BDNotifyListener {
         public void onNotify(BDLocation mlocation, float distance){
-            if(mArrivedCallback != null){
-                mArrivedCallback.arriaved(mlocation,distance);
-            }
-            sendHint(RemonderLocationService.this,true,getString(R.string.arrived_reminder),"","");
-            setCancleReminder();
-            //已到达设置监听位置附近
+            notifyArriveTarget();
             Log.d(TAG,"onNotify 已到达设置监听位置附近 distance = "+distance+" "+mlocation.getAddress());
         }
+    }
+
+    private void notifyArriveTarget(){
+        sendHint(RemonderLocationService.this,true,getString(R.string.arrived_reminder),"","");
+        if(mArrivedCallback != null){
+            mArrivedCallback.arriaved(null,0);
+        }
+        setCancleReminder();
     }
 
     public static void sendHint(Context context, boolean isArrive, String title, String content, String change) {

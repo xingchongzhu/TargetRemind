@@ -24,9 +24,11 @@
         android:drawablePadding="5dp"
         android:padding="5dp"
         android:gravity="center_vertical"
-        android:hint="语音识别结果"
+        android:drawableRight="@drawable/ic_voice_icon"
+        android:hint="@string/start_record_recognize"
         android:textColor="#ffffff"
-        android:textSize="16dp" />
+        android:singleLine="true"
+        android:textSize="@dimen/textvie_item_text_size" />
     <TextView
         android:id="@+id/sug_result"
         android:layout_width="match_parent"
@@ -38,13 +40,12 @@
         android:gravity="center_vertical"
         android:text="@string/sug_result"
         android:textColor="#ffffff"
-        android:textSize="16dp" />
+        android:textSize="@dimen/item_text_title_size" />
     <com.heytap.wearable.support.recycler.widget.RecyclerView
         android:id="@+id/recyler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/sug_result"
-        android:layout_marginBottom="40dp"
         android:layout_marginTop="5dp"
         android:fadeScrollbars="true"
         android:scrollbars="vertical" />
@@ -54,6 +55,7 @@
         android:layout_height="36dp"
         android:layout_alignParentBottom="true"
         android:text="@string/start_record_recognize"
+        android:visibility="gone"
         tools:ignore="MissingConstraints" />
 
 </RelativeLayout>

@@ -19,15 +19,15 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
-
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-feature android:name="android.hardware.type.watch" />
     <uses-permission android:name="${service_permission}" />
     <application
         android:name=".LocationApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_location"
+        android:icon="@drawable/ic_launcher_round_icon"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_location"
+        android:roundIcon="@drawable/ic_launcher_round_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name="com.wtach.stationremind.MainActivity">

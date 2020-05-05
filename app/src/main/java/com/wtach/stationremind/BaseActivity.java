@@ -3,7 +3,13 @@ package com.wtach.stationremind;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.LinkProperties;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -18,6 +24,7 @@ import com.baidu.mapapi.SDKInitializer;
 import com.heytap.wearable.support.widget.HeyDialog;
 import com.wtach.stationremind.utils.AppSharePreferenceMgr;
 import com.wtach.stationremind.utils.CommonConst;
+import com.wtach.stationremind.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +40,7 @@ public abstract class BaseActivity extends Activity {
     private final String TAG = "BaseActivity";
     private final int SDK_PERMISSION_REQUEST = 127;
     String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
-            ,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE,
+            , Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.RECORD_AUDIO};
     //2、创建一个mPermissionList，逐个判断哪些权限未授予，未授予的权限存储到mPerrrmissionList中
     List<String> mPermissionList = new ArrayList<>();
@@ -71,12 +78,21 @@ public abstract class BaseActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(!hasDeclaredSecretPermission()){
+        if (!hasDeclaredSecretPermission()) {
             secretPermissionDeclareDialog();
-        }else{
-
+        }else {
+            if(getPersimmions()){
+               checkoutGpsAndNetWork();
+            }
         }
-        getPersimmions();
+    }
+
+    protected boolean checkoutGpsAndNetWork(){
+        if (!NetWorkUtils.isGPSEnabled(this) || (!NetWorkUtils.isMobileConnected(this) && !NetWorkUtils.isNetworkConnected(this))) {
+            showGpsDialog(this);
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -85,20 +101,22 @@ public abstract class BaseActivity extends Activity {
         if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             SDKInitializer.initialize(getApplicationContext());
         }
+        checkoutGpsAndNetWork();
     }
 
-    protected boolean hasDeclaredSecretPermission(){
-        boolean value= (Boolean) AppSharePreferenceMgr.get(this, CommonConst.SECRET_PERMISSION_DECLARE_KEY,false);
-        Log.d(TAG,"hasDeclaredSecretPermission = "+value);
+    protected boolean hasDeclaredSecretPermission() {
+        boolean value = (Boolean) AppSharePreferenceMgr.get(this, CommonConst.SECRET_PERMISSION_DECLARE_KEY, false);
+        Log.d(TAG, "hasDeclaredSecretPermission = " + value);
         return value;
     }
 
-    private void networkDeclare(){
+    private void networkDeclare() {
         HeyDialog.HeyBuilder builder = new HeyDialog.HeyBuilder(this);
-        builder.setContentView(R.layout.custom_layout).setNegativeButton(getResources().getString(R.string.enture), null) .
-                setPositiveButton(getResources().getString(R.string.cancel), new View.OnClickListener() {
-                    @Override public void onClick(View v) {
-                        AppSharePreferenceMgr.put(BaseActivity.this, CommonConst.SECRET_PERMISSION_DECLARE_KEY,true);
+        builder.setContentView(R.layout.custom_layout).setNegativeButton(getResources().getString(R.string.cancel), null).
+                setPositiveButton(getResources().getString(R.string.enture), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AppSharePreferenceMgr.put(BaseActivity.this, CommonConst.SECRET_PERMISSION_DECLARE_KEY, true);
                         Toast.makeText(BaseActivity.this, "隐私申明",
                                 Toast.LENGTH_LONG).show();
                     }
@@ -110,18 +128,48 @@ public abstract class BaseActivity extends Activity {
     protected void secretPermissionDeclareDialog() {
         HeyDialog.HeyBuilder builder = new HeyDialog.HeyBuilder(getBaseContext());
         builder.setContentViewStyle(HeyDialog.STYLE_PROTOCOL)
-                .setTitle(getResources().getString(R.string.secret_declare_title)) .
+                .setTitle(getResources().getString(R.string.secret_declare_title)).
                 setMessage(getResources().getString(R.string.secret_declare_content))
-                .setButtonOrientation(LinearLayout.HORIZONTAL) .
-                setSummary(getResources().getString(R.string.secret_declare_enture_hint)) .
-                setNegativeButton(getResources().getString(R.string.enture), null) .
+                .setButtonOrientation(LinearLayout.HORIZONTAL).
+                setSummary(getResources().getString(R.string.secret_declare_enture_hint)).
+                setNegativeButton(getResources().getString(R.string.enture), null).
                 setPositiveButton(getResources().getString(R.string.cancel), new View.OnClickListener() {
-                    @Override public void onClick(View v) {
-                        AppSharePreferenceMgr.put(BaseActivity.this, CommonConst.SECRET_PERMISSION_DECLARE_KEY,true);
+                    @Override
+                    public void onClick(View v) {
+                        AppSharePreferenceMgr.put(BaseActivity.this, CommonConst.SECRET_PERMISSION_DECLARE_KEY, true);
                         Toast.makeText(BaseActivity.this, "隐私申明",
                                 Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 });
         HeyDialog dialog = builder.create();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    public static void showGpsDialog(final Context context){
+        HeyDialog.HeyBuilder builder = new HeyDialog.HeyBuilder(context);
+        builder.setContentViewStyle(HeyDialog.STYLE_TITLE_CONTENT).setTitle(context.getString(R.string.open_gps_titls))
+                .setMessage(context.getString(R.string.open_gps_content))
+                .setPositiveButton(context.getString(R.string.enture), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        NetWorkUtils.openGPS(context);
+                    }
+                });
+        HeyDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void showNetWorkDialog(){
+        HeyDialog.HeyBuilder builder = new HeyDialog.HeyBuilder(this);
+        builder.setContentViewStyle(HeyDialog.STYLE_TITLE_CONTENT).setTitle("允许使用位置权限")
+                .setMessage("轨迹等数据，允许")
+                .setPositiveButton("确定", null);
+        HeyDialog dialog = builder.create();
+        dialog.show();
     }
 }

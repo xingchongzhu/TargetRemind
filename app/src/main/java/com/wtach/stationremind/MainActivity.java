@@ -31,6 +31,7 @@ import com.wtach.stationremind.utils.CommonConst;
 import com.wtach.stationremind.utils.CommonFuction;
 import com.wtach.stationremind.utils.FileUtil;
 import com.wtach.stationremind.utils.IDef;
+import com.wtach.stationremind.utils.NetWorkUtils;
 import com.wtach.stationremind.utils.PathSerachUtil;
 import com.wtach.stationremind.utils.StartActivityUtils;
 
@@ -79,22 +80,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         selectCity.setOnClickListener(this);
 
         startRemindBtn.setEnabled(false);
+        startRemindBtn.setClickable(false);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.start_remind_btn:
-                isStartRemind = !isStartRemind;
-                updateStartBtnState();
+                if (checkoutGpsAndNetWork() && getPersimmions()){
+                    isStartRemind = !isStartRemind;
+                    updateStartBtnState();
+                }
                 break;
             case R.id.target_station:
                 StartActivityUtils.startActivity(this,SearchActivity.class, REQUES_SEARCH_ACTIVITY_END_STATION_CODE,
                         CommonConst.ACTIVITY_SELECT_TYPE_KEY, REQUES_SEARCH_ACTIVITY_END_STATION_CODE);
                 break;
             case R.id.select_city:
-                StartActivityUtils.startActivity(this,SearchActivity.class, REQUES_SEARCH_ACTIVITY_CITY_CODE,
-                        CommonConst.ACTIVITY_SELECT_TYPE_KEY, REQUES_SEARCH_ACTIVITY_CITY_CODE);
+               // StartActivityUtils.startActivity(this,SearchActivity.class, REQUES_SEARCH_ACTIVITY_CITY_CODE,
+               //         CommonConst.ACTIVITY_SELECT_TYPE_KEY, REQUES_SEARCH_ACTIVITY_CITY_CODE);
                 break;
         }
     }
@@ -131,6 +135,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     if(mTargetStation != null) {
                         targetStationView.setText(mTargetStation.key);
                         startRemindBtn.setEnabled(true);
+                        startRemindBtn.setClickable(true);
                         isStartRemind = false;
                     }
                 }
@@ -230,11 +235,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     public void arriaved(BDLocation mlocation, float distance) {
         isStartRemind = false;
         updateStartBtnState();
+        finish();
        // Toast.makeText(this,"已经到达目的地附件 "+mlocation.getAddress(),Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void errorHint(String error) {
-
+        Toast.makeText(this,error,Toast.LENGTH_LONG).show();
     }
 }

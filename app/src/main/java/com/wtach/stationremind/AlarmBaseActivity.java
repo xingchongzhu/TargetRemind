@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Window;
 
 import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,7 +31,7 @@ public abstract class AlarmBaseActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
         final  int color = getResources().getColor(R.color.clock_gray);//ThemeUtils.resolveColor(this, android.R.attr.windowBackground);
         adjustAppColor(color, false /* animate */);
     }

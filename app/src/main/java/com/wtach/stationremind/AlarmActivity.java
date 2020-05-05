@@ -137,18 +137,17 @@ public class AlarmActivity extends AlarmBaseActivity
     private ImageView mAlarmButton;
     private ImageView mSnoozeButton;
     private ImageView mDismissButton;
-    private TextView mHintView;
 
     private ValueAnimator mAlarmAnimator;
     private ValueAnimator mSnoozeAnimator;
     private ValueAnimator mDismissAnimator;
     private ValueAnimator mPulseAnimator;
+    private String hintText;
+    private TextView titleTextView;
 
     private int mInitialPointerIndex = MotionEvent.INVALID_POINTER_ID;
 
     private long[] vibrator = {500, 500};
-
-    private String hintText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,20 +166,16 @@ public class AlarmActivity extends AlarmBaseActivity
         mAlertInfoView = (TextView) mAlertView.findViewById(R.id.alert_info);
 
         mContentView = (ViewGroup) findViewById(R.id.content);
-        mAlarmButton = (ImageView) mContentView.findViewById(R.id.alarm);
-        mSnoozeButton = (ImageView) mContentView.findViewById(R.id.snooze);
-        mDismissButton = (ImageView) mContentView.findViewById(R.id.dismiss);
-        mHintView = (TextView) mContentView.findViewById(R.id.hint);
+        mAlarmButton = (ImageView) findViewById(R.id.alarm);
+        mSnoozeButton = (ImageView) findViewById(R.id.snooze);
+        mDismissButton = (ImageView) findViewById(R.id.dismiss);
 
-        final TextView content = (TextView) mContentView.findViewById(R.id.content_text);
-        final TextView title = (TextView) mContentView.findViewById(R.id.title);
-        final TextView change = (TextView) mContentView.findViewById(R.id.change);
-        final CircleView pulseView = (CircleView) mContentView.findViewById(R.id.pulse);
-
+        titleTextView = (TextView) findViewById(R.id.title);
+        final CircleView pulseView = (CircleView) findViewById(R.id.pulse);
 
         mCurrentHourColor = getResources().getColor(R.color.clock_gray);
         getWindow().setBackgroundDrawable(new ColorDrawable(mCurrentHourColor));
-
+        mContentView.setOnTouchListener(this);
         mAlarmButton.setOnTouchListener(this);
         mSnoozeButton.setOnClickListener(this);
         mDismissButton.setOnClickListener(this);
@@ -199,9 +194,7 @@ public class AlarmActivity extends AlarmBaseActivity
         //VibratorUtil.Vibrate(this,vibrator);
         Intent intent = getIntent();
         TimerKlaxon.start(this, intent.getBooleanExtra("arrive", true));
-        title.setText(intent.getStringExtra("title"));
-        content.setText(intent.getStringExtra("content"));
-        change.setText(intent.getStringExtra("change"));
+        titleTextView.setText(intent.getStringExtra("title"));
         hintText = intent.getBooleanExtra("arrive", true)?getResources().getString(R.string.alarm_alert_off_text):
                 getResources().getString(R.string.alarm_alert_snoozed_text);
     }
@@ -270,8 +263,6 @@ public class AlarmActivity extends AlarmBaseActivity
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-
-
         final int action = event.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) {
 
@@ -306,7 +297,7 @@ public class AlarmActivity extends AlarmBaseActivity
         final int alarmRight = mAlarmButton.getRight() - mAlarmButton.getPaddingRight();
 
         final float snoozeFraction, dismissFraction;
-       /* if (mContentView.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+       /* if (getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
             snoozeFraction = getFraction(alarmRight, mSnoozeButton.getLeft(), x);
             dismissFraction = getFraction(alarmLeft, mDismissButton.getRight(), x);
         } else {*/
@@ -418,7 +409,6 @@ public class AlarmActivity extends AlarmBaseActivity
                 getString(R.string.alarm_alert_off_text) /* accessibilityText */,
                 Color.WHITE, mCurrentHourColor).start();
         TimerKlaxon.stop(this);
-        //setResult(MainActivity.SHUTDOWNACTIVITY);
     }
 
     private void setAnimatedFractions(float snoozeFraction, float dismissFraction) {
@@ -451,11 +441,11 @@ public class AlarmActivity extends AlarmBaseActivity
         bounceAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animator) {
-                mHintView.setText(text);
+                /*mHintView.setText(text);
                 if (mHintView.getVisibility() != View.VISIBLE) {
                     mHintView.setVisibility(View.VISIBLE);
                     ObjectAnimator.ofFloat(mHintView, View.ALPHA, 0.0f, 1.0f).start();
-                }
+                }*/
             }
         });
         return bounceAnimator;
@@ -501,7 +491,7 @@ public class AlarmActivity extends AlarmBaseActivity
                     mAlertInfoView.setVisibility(View.VISIBLE);
                 }
                 mContentView.setVisibility(View.GONE);
-
+                titleTextView.setVisibility(View.GONE);
                 getWindow().setBackgroundDrawable(new ColorDrawable(backgroundColor));
             }
         });

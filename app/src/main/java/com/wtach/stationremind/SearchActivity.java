@@ -3,6 +3,7 @@ package com.wtach.stationremind;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -116,6 +117,8 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
         txtResult.setOnClickListener(this);
         recordBtn.setOnClickListener(this);
+
+        setVoiceIconDrawable(R.drawable.ic_voice_icon);
     }
 
     private void initTitleBar() {
@@ -125,13 +128,13 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         switch (type) {
             case CommonConst.REQUES_SEARCH_ACTIVITY_END_STATION_CODE:
                 title = getString(R.string.seletc_target_station_title);
-                recordBtn.setVisibility(View.VISIBLE);
+                //recordBtn.setVisibility(View.VISIBLE);
                 txtResult.setVisibility(View.VISIBLE);
                 break;
             case CommonConst.REQUES_SEARCH_ACTIVITY_CITY_CODE:
                 title = getString(R.string.seletc_city_title);
                 sugResult.setText(R.string.city_list);
-                recordBtn.setVisibility(View.GONE);
+                //recordBtn.setVisibility(View.GONE);
                 txtResult.setVisibility(View.GONE);
                 break;
         }
@@ -184,33 +187,33 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.start_record:
             case R.id.text_result:
-                switch (status) {
-                    case STATUS_NONE: // 初始状态
-                        mRecognizerImp.start();
-                        status = STATUS_WAITING_READY;
-                        updateBtnTextByStatus();
-                        txtResult.setText("");
-                        break;
-                    case STATUS_WAITING_READY: // 调用本类的start方法后，即输入START事件后，等待引擎准备完毕。
-                    case STATUS_READY: // 引擎准备完毕。
-                    case STATUS_SPEAKING: // 用户开始讲话
-                    case STATUS_FINISHED: // 一句话识别语音结束
-                    case STATUS_RECOGNITION: // 识别中
-                        mRecognizerImp.stop();
-                        status = STATUS_STOPPED; // 引擎识别中
-                        updateBtnTextByStatus();
-                        break;
-                    case STATUS_LONG_SPEECH_FINISHED: // 长语音识别结束
-                    case STATUS_STOPPED: // 引擎识别中
-                        mRecognizerImp.cancel();
-                        status = STATUS_NONE; // 识别结束，回到初始状态
-                        updateBtnTextByStatus();
-                        break;
-                    default:
-                        break;
+                if (checkoutGpsAndNetWork() && getPersimmions()) {
+                    switch (status) {
+                        case STATUS_NONE: // 初始状态
+                            mRecognizerImp.start();
+                            status = STATUS_WAITING_READY;
+                            updateBtnTextByStatus();
+                            //txtResult.setText("");
+                            break;
+                        case STATUS_WAITING_READY: // 调用本类的start方法后，即输入START事件后，等待引擎准备完毕。
+                        case STATUS_READY: // 引擎准备完毕。
+                        case STATUS_SPEAKING: // 用户开始讲话
+                        case STATUS_FINISHED: // 一句话识别语音结束
+                        case STATUS_RECOGNITION: // 识别中
+                            mRecognizerImp.stop();
+                            status = STATUS_STOPPED; // 引擎识别中
+                            updateBtnTextByStatus();
+                            break;
+                        case STATUS_LONG_SPEECH_FINISHED: // 长语音识别结束
+                        case STATUS_STOPPED: // 引擎识别中
+                            mRecognizerImp.cancel();
+                            status = STATUS_NONE; // 识别结束，回到初始状态
+                            updateBtnTextByStatus();
+                            break;
+                        default:
+                            break;
+                    }
                 }
-
-                break;
         }
     }
 
@@ -228,7 +231,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                         shpno = IDef.DEFAULTCITY;
                     }
                     mSuggestionSearch.requestSuggestion(new SuggestionSearchOption().city(shpno).keyword(result));
-                    txtResult.setText(shpno+" "+result.trim().replace("，",""));
+                    txtResult.setText(shpno + " " + result.trim().replace("，", ""));
                 }
                 status = msg.what;
                 updateBtnTextByStatus();
@@ -249,24 +252,38 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     private void updateBtnTextByStatus() {
         switch (status) {
             case STATUS_NONE:
-                recordBtn.setText(getString(R.string.start_recognizeing));
-                recordBtn.setEnabled(true);
+                //recordBtn.setText(getString(R.string.start_recognizeing));
+                //recordBtn.setEnabled(true);
+                txtResult.setClickable(true);
+                setVoiceIconDrawable(R.drawable.ic_voice_icon);
                 break;
-            case STATUS_WAITING_READY:
             case STATUS_READY:
+            case STATUS_WAITING_READY:
             case STATUS_SPEAKING:
             case STATUS_RECOGNITION:
-                recordBtn.setText(getString(R.string.stop_recognizeing));
-                recordBtn.setEnabled(true);
+                //recordBtn.setText(getString(R.string.stop_recognizeing));
+                //recordBtn.setEnabled(false);
+                txtResult.setText(getString(R.string.stop_recognizeing));
+                setVoiceIconDrawable(R.drawable.ic_voice_listener_icon);
+                txtResult.setClickable(false);
                 break;
             case STATUS_LONG_SPEECH_FINISHED:
             case STATUS_STOPPED:
-                recordBtn.setText(getString(R.string.calcel_recognizeing));
-                recordBtn.setEnabled(true);
+                //recordBtn.setText(getString(R.string.calcel_recognizeing));
+                //recordBtn.setEnabled(true);
+                txtResult.setClickable(true);
+                setVoiceIconDrawable(R.drawable.ic_voice_icon);
                 break;
             default:
                 break;
         }
+    }
+
+    private void setVoiceIconDrawable(int resId) {
+        Drawable drawable = getDrawable(resId);
+        drawable.setBounds(0, 0, (int) getResources().getDimension(R.dimen.voice_icon_size),
+                (int) getResources().getDimension(R.dimen.voice_icon_size));
+        txtResult.setCompoundDrawables(null, null, drawable, null);
     }
 
     private void selectFinish() {
@@ -284,7 +301,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             resultKey = ((StationInfo) object).cname;
         } else if (object instanceof CityInfo) {
             resultKey = ((CityInfo) object).getCityName();
-        }else if(object instanceof SuggestionResult.SuggestionInfo){
+        } else if (object instanceof SuggestionResult.SuggestionInfo) {
             mSuggestionInfo = ((SuggestionResult.SuggestionInfo) object);
         }
         selectFinish();
@@ -305,9 +322,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             List list = suggestionResult.getAllSuggestions();
             mCustomAdapter.setData(list);
             //处理sug检索结果
-            if(list == null && list.size() <= 0){
+            if (list == null && list.size() <= 0) {
                 sugResult.setText(getString(R.string.no_sug_result));
-            }else{
+            } else {
                 sugResult.setText(getString(R.string.sug_result));
             }
             //Log.d(TAG,"onGetSuggestionResult suggestionResult = "+suggestionResult.getAllSuggestions()+" error = "+suggestionResult.error);

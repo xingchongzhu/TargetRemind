@@ -23,9 +23,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Property;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.wtach.stationremind.R;
 
@@ -35,6 +37,7 @@ import com.wtach.stationremind.R;
  */
 public class CircleView extends View {
 
+    private final String TAG = this.getClass().getSimpleName();
     /**
      * A Property wrapper around the fillColor functionality handled by the
      * {@link #setFillColor(int)} and {@link #getFillColor()} methods.
@@ -98,6 +101,7 @@ public class CircleView extends View {
         mCenterY = a.getDimension(R.styleable.CircleView_centerY, 0.0f);
         mRadius = a.getDimension(R.styleable.CircleView_radius, 0.0f);
 
+        Log.d(TAG,"CircleView mCenterX = "+mCenterX);
         mCirclePaint.setColor(a.getColor(R.styleable.CircleView_fillColor, Color.WHITE));
 
         a.recycle();
@@ -204,7 +208,7 @@ public class CircleView extends View {
             invalidate(oldCenterX, mCenterY, mRadius);
             invalidate(centerX, mCenterY, mRadius);
         }
-
+        Log.d(TAG,"setCenterX mCenterX = "+mCenterX);
         // clear the horizontal gravity flags
         mGravity &= ~Gravity.HORIZONTAL_GRAVITY_MASK;
 
@@ -280,6 +284,17 @@ public class CircleView extends View {
                 (int) (centerX + radius + 0.5f), (int) (centerY + radius + 0.5f));
     }
 
+    @Override
+    public ViewGroup.LayoutParams getLayoutParams() {
+        return super.getLayoutParams();
+    }
+
+    @Override
+    public void setLayoutParams(ViewGroup.LayoutParams params) {
+        super.setLayoutParams(params);
+        Log.d(TAG,"setLayoutParams width = "+params.width);
+    }
+
     /**
      * Applies the specified {@code gravity} and {@code layoutDirection}, adjusting the alignment
      * and size of the circle depending on the resolved {@link Gravity} flags. Also invalidates the
@@ -308,7 +323,8 @@ public class CircleView extends View {
                 mCenterX = getWidth();
                 break;
         }
-
+        if(mCenterX > 0)
+        Log.d(TAG,"setCenterX mCenterX = "+mCenterX+"width = "+getWidth(),new Throwable());
         switch (absoluteGravity & Gravity.VERTICAL_GRAVITY_MASK) {
             case Gravity.TOP:
                 mCenterY = 0.0f;

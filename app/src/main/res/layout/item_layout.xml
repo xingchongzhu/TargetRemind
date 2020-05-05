@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/item_text_color"
-        android:textSize="@dimen/item_text_size"
+        android:textSize="@dimen/textvie_item_text_size"
         android:padding="5dp"
         >
     </TextView>
