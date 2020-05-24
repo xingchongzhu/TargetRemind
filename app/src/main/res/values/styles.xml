@@ -23,4 +23,11 @@
         <item name="android:textSize">@dimen/alarm_info_font_size</item>
         <item name="android:fontFamily">sans-serif-thin</item>
     </style>
+    <declare-styleable name="DancingView">
+        <attr name="lineWidth" format="dimension" />
+        <attr name="lineHeight" format="dimension" />
+        <attr name="pointColor" format="reference|color" />
+        <attr name="lineColor" format="reference|color" />
+        <attr name="ballColor" format="reference|color" />
+    </declare-styleable>
 </resources>

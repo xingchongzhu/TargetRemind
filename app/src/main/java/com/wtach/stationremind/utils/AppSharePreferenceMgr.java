@@ -3,10 +3,17 @@ package com.wtach.stationremind.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Parcelable;
+import android.preference.PreferenceManager;
+import android.util.Base64;
 import android.widget.ImageView;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -84,6 +91,74 @@ public class AppSharePreferenceMgr {
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.remove(key);
+        SharedPreferencesCompat.apply(editor);
+    }
+
+    /**
+     * 获取保存的序列化的实体
+     *
+     * @param context
+     * @param key
+     * @return
+     */
+    public static Object getSerializableEntity(Context context, String key) {
+        SharedPreferences sharePre = context.getSharedPreferences(FILE_NAME,
+                Context.MODE_PRIVATE);
+        try {
+            String wordBase64 = sharePre.getString(key, "");
+            // 将base64格式字符串还原成byte数组
+            if (wordBase64 == null || wordBase64.equals("")) { // 不可少，否则在下面会报java.io
+                // .StreamCorruptedException
+                return null;
+            }
+            byte[] objBytes = Base64.decode(wordBase64.getBytes(), Base64.DEFAULT);
+            ByteArrayInputStream bais = new ByteArrayInputStream(objBytes);
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            // 将byte数组转换成product对象
+            Object obj = ois.readObject();
+            bais.close();
+            ois.close();
+            return obj;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * 保存序列号的实体类
+     *
+     * @param context
+     * @param key
+     * @param object
+     */
+    public static void putSerializableEntity(Context context, String key, Serializable object) {
+
+        SharedPreferences share =  context.getSharedPreferences(FILE_NAME,
+                Context.MODE_PRIVATE);
+        if (object == null) {
+            SharedPreferences.Editor editor = share.edit().remove(key);
+            return;
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = null;
+        String objectStr = "";
+        try {
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(object);
+            // 将对象放到OutputStream中
+            // 将对象转换成byte数组，并将其进行base64编码
+            objectStr = new String(Base64.encode(baos.toByteArray(), Base64.DEFAULT));
+            baos.close();
+            oos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        SharedPreferences.Editor editor = share.edit();
+        // 将编码后的字符串写到base64.xml文件中
+        editor.putString(key, objectStr);
         SharedPreferencesCompat.apply(editor);
     }
 

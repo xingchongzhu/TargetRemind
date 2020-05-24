@@ -37,6 +37,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.ImageView;
@@ -193,7 +194,7 @@ public class AlarmActivity extends AlarmBaseActivity
         mPulseAnimator.start();
         //VibratorUtil.Vibrate(this,vibrator);
         Intent intent = getIntent();
-        TimerKlaxon.start(this, intent.getBooleanExtra("arrive", true));
+        TimerKlaxon.getInstance(this).start(this, intent.getBooleanExtra("arrive", true));
         titleTextView.setText(intent.getStringExtra("title"));
         hintText = intent.getBooleanExtra("arrive", true)?getResources().getString(R.string.alarm_alert_off_text):
                 getResources().getString(R.string.alarm_alert_snoozed_text);
@@ -210,7 +211,7 @@ public class AlarmActivity extends AlarmBaseActivity
         super.onPause();
     }
 
-    @Override
+    /*@Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
         // Do this in dispatch to intercept a few of the system keys.
         Log.v(TAG, "dispatchKeyEvent: %s" + keyEvent);
@@ -236,7 +237,7 @@ public class AlarmActivity extends AlarmBaseActivity
     @Override
     public void onBackPressed() {
         // Don't allow back to dismiss.
-    }
+    }*/
 
     @Override
     public void onClick(View view) {
@@ -257,8 +258,15 @@ public class AlarmActivity extends AlarmBaseActivity
         if (view == mSnoozeButton) {
             hintSnooze();
         } else if (view == mDismissButton) {
-            hintDismiss();
+            hintDismiss(true);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        dismiss();
+        finish();
     }
 
     @Override
@@ -319,7 +327,10 @@ public class AlarmActivity extends AlarmBaseActivity
                     AnimatorUtils.reverse(mAlarmAnimator, mSnoozeAnimator, mDismissAnimator);
                 } else if (mAlarmButton.getTop() <= y && y <= mAlarmButton.getBottom()) {
                     // User touched the alarm button, hint the dismiss action.
-                    hintDismiss();
+                    int out[] = new int[2];
+                    mAlarmButton.getLocationInWindow(out);
+                    int centerx = out[1]+mAlarmButton.getWidth()/2;
+                    hintDismiss(x < centerx);
                 }
 
                 // Restart the pulse.
@@ -361,11 +372,12 @@ public class AlarmActivity extends AlarmBaseActivity
                 hintText : getResources().getString(R.string.stop_hint)).start();
     }
 
-    private void hintDismiss() {
+    private void hintDismiss(boolean left) {
         final int alarmLeft = mAlarmButton.getLeft() + mAlarmButton.getPaddingLeft();
         final int alarmRight = mAlarmButton.getRight() - mAlarmButton.getPaddingRight();
-        final float translationX = Math.max(mDismissButton.getLeft() - alarmRight, 0)
-                + Math.min(mDismissButton.getRight() - alarmLeft, 0);
+        int direction = left ? -1 : 1;
+        final float translationX = direction * (Math.max(mDismissButton.getLeft() - alarmRight, 0)
+                + Math.min(mDismissButton.getRight() - alarmLeft, 0));
         getAlarmBounceAnimator(translationX, translationX < 0.0f ?
                 hintText : getResources().getString(R.string.stop_hint)).start();
     }
@@ -398,7 +410,7 @@ public class AlarmActivity extends AlarmBaseActivity
         getAlertAnimator(mSnoozeButton, hintText, infoText,
                 accessibilityText, colorAccent, colorAccent).start();
         // VibratorUtil.StopVibrate(this);
-        TimerKlaxon.stop(this);
+        TimerKlaxon.getInstance(this).stop(this);
 
     }
 
@@ -407,8 +419,8 @@ public class AlarmActivity extends AlarmBaseActivity
         setAnimatedFractions(0.0f /* snoozeFraction */, 1.0f /* dismissFraction */);
         getAlertAnimator(mDismissButton, getResources().getString(R.string.stop_hint), null /* infoText */,
                 getString(R.string.alarm_alert_off_text) /* accessibilityText */,
-                Color.WHITE, mCurrentHourColor).start();
-        TimerKlaxon.stop(this);
+                Color.BLACK, mCurrentHourColor).start();
+        TimerKlaxon.getInstance(this).stop(this);
     }
 
     private void setAnimatedFractions(float snoozeFraction, float dismissFraction) {

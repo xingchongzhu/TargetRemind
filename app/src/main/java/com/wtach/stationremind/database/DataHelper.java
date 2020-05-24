@@ -647,7 +647,6 @@ public class DataHelper {
         long rowid = db.delete(SqliteHelper.TB_EXIT_INFO, ExitInfo.CNAME + " = ? and " + ExitInfo.EXITNAME + " = ?",
                 new String[]{exitInfo.getCname(), exitInfo.getExitname()});
         insetExitInfo(exitInfo);
-        Log.d("zxc", "cname = " + exitInfo.getCname() + " exitname = " + exitInfo.getExitname() + " rowid = " + rowid);
     }
 
     public boolean insetExitInfo(ExitInfo exitInfo) {
@@ -656,7 +655,6 @@ public class DataHelper {
         values.put(ExitInfo.EXITNAME, exitInfo.getExitname());
         values.put(ExitInfo.ADDR, exitInfo.getAddr());
         long rowid = db.insert(SqliteHelper.TB_EXIT_INFO, null, values);
-        Log.d("zxc", "insetExitInfo rowid = " + rowid);
         if (rowid > 0)
             return true;
         return false;

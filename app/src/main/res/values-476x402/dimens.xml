@@ -3,7 +3,8 @@
     <dimen name="btn_height">40dp</dimen>
     <dimen name="btn_width">25dp</dimen>
     <dimen name="search_delete">20dp</dimen>
-    <dimen name="search_height">35dp</dimen>
+    <dimen name="search_height">20dp</dimen>
+    <dimen name="delete_icon_size">18dp</dimen>
     <dimen name="serach_radius_corners">2dp</dimen>
     <dimen name="edit_margin">2dp</dimen>
     <dimen name="item_text_title_size">16dp</dimen>
@@ -23,6 +24,7 @@
     <dimen name="single_color_height">60dp</dimen>
     <dimen name="line_color_height">110dp</dimen>
 
-    <dimen name="textvie_item_text_size">14dp</dimen>
+    <dimen name="textvie_item_text_size">12dp</dimen>
+    <dimen name="title_size">14sp</dimen>
     <dimen name="dimiss_icon_size">38dp</dimen>
 </resources>

@@ -220,7 +220,6 @@ public class PathSerachUtil {
         }
         //取出一条路线
         int n = 0;
-        //Log.d("zxc002","--------------------------------------------------------------------");
         for (List<Integer> list : transferLine) {
             StationInfo startStation = null, endStation = null;
             final int size = list.size();
@@ -256,7 +255,6 @@ public class PathSerachUtil {
             Stack<Node> pathstack = new Stack();
             tool.iteratorNode(root, pathstack);
             List<LineObject> all = new ArrayList<>();
-            //Log.d("zxc002","----------start--------------- list = "+list);
             for (List<StationInfo> entry : tool.pathMap) {
                 all.add(getLineStation(list,entry, mLineInfoList));
             }
@@ -271,7 +269,6 @@ public class PathSerachUtil {
                 for(StationInfo stationInfo:min.stationList){
                     map.put(stationInfo.lineid,stationInfo.lineid);
                 }
-                //Log.d("zxc002", "list " + list + "  " + map.size());
                 //if(map.size() == list.size()) {
                     currentAllStationList.add(min);
                 //}
@@ -303,7 +300,6 @@ public class PathSerachUtil {
         List<StationInfo> transferList = new ArrayList<>();
         int size = list.size();
         StringBuffer buf = new StringBuffer();
-        //Log.d("zxc","----------start---------------");
 
         if(tranfers.size() < (list.size() -1)) {
             int i = 0;
@@ -354,9 +350,6 @@ public class PathSerachUtil {
             StationInfo stationInfo = (StationInfo) start.getNodeEntity();
             buf.append(stationInfo.lineid+"  "+stationInfo.getCname()+" ->");*/
         }
-
-        //Log.d("zxc002",buf.toString());
-        //Log.d("zxc002","----------end--------------");
         return new LineObject(oneLineMap,tranfers,transferList);
     }
 
@@ -484,7 +477,7 @@ public class PathSerachUtil {
         return nerstStationInfo;
     }
 
-    public static final int MINDIS = 800;
+    public static final int MINDIS = 1000;
 
     public static StationInfo getNerastNextStation(BDLocation location, Map<Integer, LineInfo> mLineInfoList) {
         double min = Double.MAX_VALUE;

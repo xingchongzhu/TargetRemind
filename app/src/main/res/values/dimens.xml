@@ -3,7 +3,8 @@
     <dimen name="btn_height">40dp</dimen>
     <dimen name="btn_width">25dp</dimen>
     <dimen name="search_delete">20dp</dimen>
-    <dimen name="search_height">35dp</dimen>
+    <dimen name="search_height">30dp</dimen>
+    <dimen name="delete_icon_size">18dp</dimen>
     <dimen name="serach_radius_corners">2dp</dimen>
     <dimen name="edit_margin">2dp</dimen>
     <dimen name="item_text_title_size">16dp</dimen>
@@ -11,6 +12,7 @@
     <dimen name="notif_station_size">12dp</dimen>
     <dimen name="notif_text_pad">5dp</dimen>
     <dimen name="margin_gap">3dp</dimen>
+    <dimen name="title_size">18sp</dimen>
 
     <dimen name="big_font_size">16sp</dimen>
     <dimen name="alarm_lockscreen_pulse_radius">80dp</dimen>
@@ -26,4 +28,5 @@
     <dimen name="textvie_item_text_size">14dp</dimen>
     <dimen name="voice_icon_size">25dp</dimen>
     <dimen name="dimiss_icon_size">38dp</dimen>
+    <dimen name="radius_padding">5dp</dimen>
 </resources>

@@ -22,6 +22,7 @@
         android:layout_below="@id/back_titlebar"
         android:background="@drawable/text_view_selector"
         android:drawablePadding="5dp"
+        android:layout_margin="5dp"
         android:padding="5dp"
         android:gravity="center_vertical"
         android:drawableRight="@drawable/ic_voice_icon"
@@ -29,26 +30,47 @@
         android:textColor="#ffffff"
         android:singleLine="true"
         android:textSize="@dimen/textvie_item_text_size" />
-    <TextView
-        android:id="@+id/sug_result"
+
+    <LinearLayout
+        android:id="@+id/result_linear"
+        android:layout_below="@id/text_result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_below="@id/text_result"
-        android:drawablePadding="5dp"
-        android:padding="5dp"
-        android:gravity="center_vertical"
-        android:text="@string/sug_result"
-        android:textColor="#ffffff"
-        android:textSize="@dimen/item_text_title_size" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/sug_result_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:drawablePadding="5dp"
+            android:padding="5dp"
+            android:gravity="center_vertical"
+            android:text="@string/search_history"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/item_text_title_size" />
+
+        <com.wtach.stationremind.views.AudioWaveView
+            android:id="@+id/audioview"
+            android:layout_width="40dp"
+            android:layout_height="36dp"
+            android:layout_margin="10dp"
+            android:visibility="gone"
+            android:gravity="center_vertical"
+            />
+    </LinearLayout>
+
+
     <com.heytap.wearable.support.recycler.widget.RecyclerView
         android:id="@+id/recyler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/sug_result"
+        android:layout_below="@id/result_linear"
         android:layout_marginTop="5dp"
         android:fadeScrollbars="true"
         android:scrollbars="vertical" />
+
+
     <com.heytap.wearable.support.widget.HeyShapeButton
         android:id="@+id/start_record"
         android:layout_width="match_parent"
@@ -57,5 +79,4 @@
         android:text="@string/start_record_recognize"
         android:visibility="gone"
         tools:ignore="MissingConstraints" />
-
 </RelativeLayout>

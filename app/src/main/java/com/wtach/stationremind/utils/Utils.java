@@ -36,14 +36,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.ArraySet;
+import android.util.Log;
 import android.view.View;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -336,5 +340,23 @@ public class Utils {
     }
 
 
+    public static List getHistoryTargets(Context context){
+        List list = new ArrayList();
+        String string = (String) AppSharePreferenceMgr.get(context,IDef.RECENT_TARGET_SELECT_LIST_KEY,"");
+        if(!TextUtils.isEmpty(string)){
+            String[] splits = string.split(IDef.TARGET_LIST_SPLIT);
+            if(splits != null){
+                list = new ArrayList<>();
+                for(String str : splits){
+                    Object object = AppSharePreferenceMgr.getSerializableEntity(context,str);
+                    if(object != null){
+                        list.add(object);
+                        Log.d("Utils","onCreate object = "+object.toString());
+                    }
+                }
+            }
+        }
+        return list;
+    }
 
 }

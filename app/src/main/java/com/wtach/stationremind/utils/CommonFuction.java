@@ -160,8 +160,7 @@ public class CommonFuction {
 
                 }
             }
-        }
-        Log.d("zxc000",stringBuffer.toString());
+        };
         LineObject.stationList = list;
         LineObject.lineidList = listLine;
         LineObject.transferList = transferList;

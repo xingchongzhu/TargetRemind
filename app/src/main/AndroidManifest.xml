@@ -30,7 +30,10 @@
         android:roundIcon="@drawable/ic_launcher_round_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.wtach.stationremind.MainActivity">
+        <activity android:name="com.wtach.stationremind.MainActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|mcc|mnc|navigation|orientation|screenSize|screenLayout|smallestScreenSize"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,18 +41,28 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.wtach.stationremind.SearchActivity">
+        <activity android:name="com.wtach.stationremind.SearchActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|mcc|mnc|navigation|orientation|screenSize|screenLayout|smallestScreenSize"
+            >
         </activity>
 
-        <activity android:name="com.wtach.stationremind.AlarmActivity">
-
+        <activity android:name="com.wtach.stationremind.AlarmActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleInstance"
+            android:configChanges="keyboard|keyboardHidden|mcc|mnc|navigation|orientation|screenSize|screenLayout|smallestScreenSize"
+            >
         </activity>
 
         <service
             android:name="com.wtach.stationremind.service.RemonderLocationService"
-            android:enabled="true"
-            android:permission="android.permission.BAIDU_LOCATION_SERVICE"
-            android:persistent="true"></service>
+            android:exported="true"
+            >
+            <intent-filter>
+                <!--是客户端用于访问AIDL服务的ID  -->
+                <action android:name="com.android.remind.location.Service" />
+            </intent-filter>
+        </service>
 
 
         <!-- 声明百度定位服务组件 -->

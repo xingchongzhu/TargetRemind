@@ -245,7 +245,6 @@ public class DataManager implements ImportDatabaseListener {
         for (Map.Entry<String, String> entry : stringBuffer.entrySet()) {
             str.append(entry.getValue() + " -> ");
         }
-        Log.d("zxc002", str.toString());
         str.delete(0, str.length());
         stringBuffer.clear();
         lists.clear();

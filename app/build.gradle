@@ -10,13 +10,13 @@ android {
         }
     }
     compileSdkVersion 28
-    buildToolsVersion "29.0.2"
+    //buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.wtach.stationremind"
         minSdkVersion 27
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 111
+        versionName "1.1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [
                 "service_permission": "com.heytap.wearable.oms.permission.TRACSPORT",

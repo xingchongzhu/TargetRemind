@@ -11,25 +11,26 @@
     <string name="enture" translatable="false">同意</string>
     <string name="cancel" translatable="false">退出</string>
     <string name="seletc_city_title" translatable="false">城市</string>
-    <string name="seletc_target_station_title" translatable="false">目标位置</string>
+    <string name="seletc_target_station_title" translatable="false">添加目标位置</string>
     <string name="current_location" translatable="false">自动定位当前位置</string>
     <string name="target_location" translatable="false">目标</string>
     <string name="start_remind" translatable="false">开始</string>
     <string name="stop_remind" translatable="false">停止</string>
     <string name="subway" translatable="false">地铁</string>
-    <string name="arrived_reminder" translatable="false">已经抵达目的地</string>
+    <string name="arrived_reminder" translatable="false">抵达最终目的地</string>
     <string name="location" translatable="false">定位</string>
-    <string name="changet_hint_tile" translatable="false">换乘提醒</string>
+    <string name="changet_hint_tile" translatable="false">已经抵达</string>
     <string name="current_station" translatable="false">当前位置:</string>
     <string name="next_station" translatable="false">下一站:</string>
     <string name="direction" translatable="false">方向</string>
     <string name="select_city_not_match_location_city" translatable="false">当前选择城市与定位城市不符，无法切换城市</string>
     <string name="start_record_recognize" translatable="false">语音识别</string>
     <string name="start_recognizeing" translatable="false">开始识别</string>
-    <string name="stop_recognizeing" translatable="false">正在识别识别</string>
+    <string name="stop_recognizeing" translatable="false">正在识别</string>
     <string name="calcel_recognizeing" translatable="false">取消识别</string>
     <string name="no_sug_result" translatable="false">无内容</string>
     <string name="sug_result" translatable="false">搜索内容</string>
+    <string name="search_history" translatable="false">搜索历史</string>
     <string name="city_list" translatable="false">城市列表</string>
     <string name="stop_hint" translatable="false">"结束提醒再会!"</string>
     <string name="alarm_alert_off_text" translatable="false">"已经抵达目的地"</string>
@@ -37,5 +38,6 @@
     <string name="open_gps_titls" translatable="false">检查GPS或网络</string>
     <string name="open_gps_content" translatable="false">应用需要开启Gps定位功能并且需要连接可用网络</string>
     <string name="start_remind_fail" translatable="false">开启失败，请检查网络或gps是否可用</string>
+    <string name="max_target_count_hint" translatable="false">不能添加更多提醒位置</string>
 </resources>
 

@@ -103,7 +103,6 @@ public class FileUtil {
                     address_temp = addressList.get(0);
                     double Latitude = address_temp.getLatitude()+disLat;
                     double Longitude = address_temp.getLongitude()+disLong;
-                    Log.d("zxc003",str+" Latitude = "+Latitude+" Longitude = "+Longitude);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -72,11 +72,11 @@ public class MessageStatusRecogListener extends StatusRecogListener {
     public void onAsrFinishError(int errorCode, int subErrorCode, String descMessage,
                                  RecogResult recogResult) {
         super.onAsrFinishError(errorCode, subErrorCode, descMessage, recogResult);
-        String message = "【asr.finish事件】识别错误, 错误码：" + errorCode + " ," + subErrorCode + " ; " + descMessage;
+        String message = descMessage;//"【asr.finish事件】识别错误, 错误码：" + errorCode + " ," + subErrorCode + " ; " +
         sendStatusMessage(SpeechConstant.CALLBACK_EVENT_ASR_PARTIAL, message);
         if (speechEndTime > 0) {
             long diffTime = System.currentTimeMillis() - speechEndTime;
-            message += "。说话结束到识别结束耗时【" + diffTime + "ms】";
+            //message += "。说话结束到识别结束耗时【" + diffTime + "ms】";
         }
         speechEndTime = 0;
         sendMessage(message, status, true);

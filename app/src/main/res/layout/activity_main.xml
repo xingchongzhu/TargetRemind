@@ -7,7 +7,7 @@
     android:layout_margin="3dp"
     tools:context=".MainActivity">
 
-    <com.heytap.wearable.support.widget.HeySingleDefaultItem
+    <TextView
         android:id="@+id/select_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,7 +16,27 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:heyText="深圳"
+        android:layout_margin="5dp"
+        android:text="深圳"
+        android:textSize="@dimen/title_size"
+        android:textColor="@color/item_text_color"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/current_station"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/select_city"
+        android:drawableLeft="@drawable/ic_location"
+        android:gravity="center_vertical"
+        android:hint="@string/current_location"
+        android:textColor="@color/blue"
+        android:drawablePadding="5dp"
+        android:singleLine="true"
+        android:textSize="@dimen/textvie_item_text_size"
         tools:ignore="MissingConstraints" />
 
 
@@ -32,16 +52,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.heytap.wearable.support.widget.HeyShapeButton
-        android:id="@+id/start_remind_btn"
+    <com.wtach.stationremind.views.DancingView
+        android:id="@+id/dancing_ball"
         android:layout_width="0dp"
-        android:layout_height="36dp"
+        android:layout_height="0dp"
         android:text="@string/start_remind"
+        app:lineColor="#ffffff"
+        app:pointColor="#ffffff"
+        app:ballColor="#de4848"
+        app:lineWidth="100dp"
+        app:lineHeight="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintVertical_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintWidth_percent="0.8"
+        app:layout_constraintHeight_percent="0.6"
+        android:layout_marginTop="5dp"
+        tools:ignore="MissingConstraints">
+
+    </com.wtach.stationremind.views.DancingView>
+    <Button
+        android:id="@+id/start_remind_btn"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintWidth_percent="0.8"
+        android:background="@drawable/ic_start_bg"
+        android:textColor="#ffffff"
+        android:textSize="8dp"
+        android:text="@string/start_remind"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

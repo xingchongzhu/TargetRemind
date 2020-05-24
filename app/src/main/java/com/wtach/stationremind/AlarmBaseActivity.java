@@ -31,7 +31,6 @@ public abstract class AlarmBaseActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
         final  int color = getResources().getColor(R.color.clock_gray);//ThemeUtils.resolveColor(this, android.R.attr.windowBackground);
         adjustAppColor(color, false /* animate */);
     }

@@ -3,7 +3,10 @@ package com.wtach.stationremind;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.LinkProperties;
@@ -45,10 +48,10 @@ public abstract class BaseActivity extends Activity {
     //2、创建一个mPermissionList，逐个判断哪些权限未授予，未授予的权限存储到mPerrrmissionList中
     List<String> mPermissionList = new ArrayList<>();
 
+    private HeyDialog netWorkDialog;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
-        getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
     }
 
     @TargetApi(23)
@@ -81,9 +84,9 @@ public abstract class BaseActivity extends Activity {
         if (!hasDeclaredSecretPermission()) {
             secretPermissionDeclareDialog();
         }else {
-            if(getPersimmions()){
-               checkoutGpsAndNetWork();
-            }
+        }
+        if(getPersimmions()){
+            checkoutGpsAndNetWork();
         }
     }
 
@@ -147,10 +150,20 @@ public abstract class BaseActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        dismissNetWorkDialog();
         super.onDestroy();
     }
 
-    public static void showGpsDialog(final Context context){
+    private void dismissNetWorkDialog(){
+        if(netWorkDialog != null && netWorkDialog.isShowing()){
+            netWorkDialog.dismiss();
+        }
+    }
+
+    private void showGpsDialog(final Context context){
+        if(netWorkDialog != null && netWorkDialog.isShowing()){
+            return;
+        }
         HeyDialog.HeyBuilder builder = new HeyDialog.HeyBuilder(context);
         builder.setContentViewStyle(HeyDialog.STYLE_TITLE_CONTENT).setTitle(context.getString(R.string.open_gps_titls))
                 .setMessage(context.getString(R.string.open_gps_content))
@@ -160,16 +173,19 @@ public abstract class BaseActivity extends Activity {
                         NetWorkUtils.openGPS(context);
                     }
                 });
-        HeyDialog dialog = builder.create();
-        dialog.show();
+        netWorkDialog = builder.create();
+        netWorkDialog.show();
     }
 
-    private void showNetWorkDialog(){
+    private void showNetWorkDialog(String title,String context){
+        if(netWorkDialog != null){
+            netWorkDialog.dismiss();
+        }
         HeyDialog.HeyBuilder builder = new HeyDialog.HeyBuilder(this);
-        builder.setContentViewStyle(HeyDialog.STYLE_TITLE_CONTENT).setTitle("允许使用位置权限")
-                .setMessage("轨迹等数据，允许")
+        builder.setContentViewStyle(HeyDialog.STYLE_TITLE_CONTENT).setTitle(title)
+                .setMessage(context)
                 .setPositiveButton("确定", null);
-        HeyDialog dialog = builder.create();
-        dialog.show();
+        netWorkDialog = builder.create();
+        netWorkDialog.show();
     }
 }

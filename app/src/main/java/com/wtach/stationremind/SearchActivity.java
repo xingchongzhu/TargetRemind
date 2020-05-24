@@ -12,7 +12,9 @@ import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.baidu.aip.asrwakeup3.core.mini.AutoCheck;
@@ -38,12 +40,16 @@ import com.wtach.stationremind.database.DataManager;
 import com.wtach.stationremind.listener.OnRecyItemClickListener;
 import com.wtach.stationremind.model.item.bean.CityInfo;
 import com.wtach.stationremind.model.item.bean.StationInfo;
+import com.wtach.stationremind.object.SelectResultInfo;
 import com.wtach.stationremind.recognize.RecogizeManager;
 import com.wtach.stationremind.recognize.RecognizerImp;
 import com.wtach.stationremind.search.CustomAdapter;
+import com.wtach.stationremind.utils.AppSharePreferenceMgr;
 import com.wtach.stationremind.utils.CommonConst;
 import com.wtach.stationremind.utils.CommonFuction;
 import com.wtach.stationremind.utils.IDef;
+import com.wtach.stationremind.utils.Utils;
+import com.wtach.stationremind.views.AudioWaveView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,18 +61,20 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-public class SearchActivity extends BaseActivity implements View.OnClickListener, OnRecyItemClickListener, IStatus, RecognizerImp.HandleResultCallback {
+public class SearchActivity extends BaseActivity implements View.OnClickListener, OnRecyItemClickListener,
+        IStatus, RecognizerImp.HandleResultCallback {
     private final String TAG = "SearchActivity";
     private HeyBackTitleBar back_titlebar;
     private RecyclerView mRecyclerView;
     private HeyShapeButton recordBtn;
     private TextView txtResult;
     private TextView sugResult;
+    private View resultLinear;
 
     private String resultKey;
     private CustomAdapter mCustomAdapter;
-    private DataManager mDataManager;
     private RecognizerImp mRecognizerImp;
+    private AudioWaveView audioview;
     /**
      * 控制UI按钮的状态
      */
@@ -75,10 +83,11 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     //Sug检索
     private SuggestionSearch mSuggestionSearch;
 
-    private SuggestionResult.SuggestionInfo mSuggestionInfo;
+    private Object mSuggestionInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_layout);
         init();
@@ -98,9 +107,12 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     private void initView() {
         back_titlebar = findViewById(R.id.back_titlebar);
-        sugResult = findViewById(R.id.sug_result);
+        sugResult = findViewById(R.id.sug_result_title);
         txtResult = findViewById(R.id.text_result);
         recordBtn = findViewById(R.id.start_record);
+        audioview = findViewById(R.id.audioview);
+        resultLinear = findViewById(R.id.result_linear);
+
         back_titlebar.setBackListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +130,14 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         txtResult.setOnClickListener(this);
         recordBtn.setOnClickListener(this);
 
+        audioview.setVisibility(View.GONE);
         setVoiceIconDrawable(R.drawable.ic_voice_icon);
+        audioview.startAnimation();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return false;
     }
 
     private void initTitleBar() {
@@ -129,13 +148,13 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             case CommonConst.REQUES_SEARCH_ACTIVITY_END_STATION_CODE:
                 title = getString(R.string.seletc_target_station_title);
                 //recordBtn.setVisibility(View.VISIBLE);
-                txtResult.setVisibility(View.VISIBLE);
+                resultLinear.setVisibility(View.VISIBLE);
                 break;
             case CommonConst.REQUES_SEARCH_ACTIVITY_CITY_CODE:
                 title = getString(R.string.seletc_city_title);
                 sugResult.setText(R.string.city_list);
                 //recordBtn.setVisibility(View.GONE);
-                txtResult.setVisibility(View.GONE);
+                resultLinear.setVisibility(View.GONE);
                 break;
         }
         Log.d(TAG, "initTitleBar title =" + title);
@@ -153,9 +172,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 }
                 break;
             case CommonConst.REQUES_SEARCH_ACTIVITY_END_STATION_CODE:
-                if (DataManager.getInstance(this).getAllstations() != null) {
-                    //list = DataManager.getInstance(this).getAllstations().values().stream().collect(Collectors.toList());
-                }
+                list = Utils.getHistoryTargets(this);
                 break;
         }
         initAdapter(list);
@@ -232,6 +249,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                     }
                     mSuggestionSearch.requestSuggestion(new SuggestionSearchOption().city(shpno).keyword(result));
                     txtResult.setText(shpno + " " + result.trim().replace("，", ""));
+                    audioview.setVisibility(View.GONE);
                 }
                 status = msg.what;
                 updateBtnTextByStatus();
@@ -255,6 +273,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 //recordBtn.setText(getString(R.string.start_recognizeing));
                 //recordBtn.setEnabled(true);
                 txtResult.setClickable(true);
+                audioview.setVisibility(View.GONE);
                 setVoiceIconDrawable(R.drawable.ic_voice_icon);
                 break;
             case STATUS_READY:
@@ -263,6 +282,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             case STATUS_RECOGNITION:
                 //recordBtn.setText(getString(R.string.stop_recognizeing));
                 //recordBtn.setEnabled(false);
+                audioview.setVisibility(View.VISIBLE);
                 txtResult.setText(getString(R.string.stop_recognizeing));
                 setVoiceIconDrawable(R.drawable.ic_voice_listener_icon);
                 txtResult.setClickable(false);
@@ -272,6 +292,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 //recordBtn.setText(getString(R.string.calcel_recognizeing));
                 //recordBtn.setEnabled(true);
                 txtResult.setClickable(true);
+                audioview.setVisibility(View.GONE);
                 setVoiceIconDrawable(R.drawable.ic_voice_icon);
                 break;
             default:
@@ -289,9 +310,52 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     private void selectFinish() {
         int type = getIntent().getIntExtra(CommonConst.ACTIVITY_SELECT_TYPE_KEY, CommonConst.REQUES_SEARCH_ACTIVITY_CITY_CODE);
         Intent intent = new Intent();
-        intent.putExtra(CommonConst.ACTIVITY_RESULT_SELECT_KEY, mSuggestionInfo);
+        SelectResultInfo selectResultInfo = null;
+        if(mSuggestionInfo instanceof SuggestionResult.SuggestionInfo){
+            SuggestionResult.SuggestionInfo tempSuggestionInfo = (SuggestionResult.SuggestionInfo) mSuggestionInfo;
+            selectResultInfo = new SelectResultInfo(tempSuggestionInfo.key,tempSuggestionInfo.city,tempSuggestionInfo.district,
+                    tempSuggestionInfo.pt.latitude,tempSuggestionInfo.pt.longitude,tempSuggestionInfo.uid,tempSuggestionInfo.address);
+        }else if(mSuggestionInfo instanceof SelectResultInfo){
+            selectResultInfo = (SelectResultInfo) mSuggestionInfo;
+        }
+
+        saveShareList(selectResultInfo);
+        intent.putExtra(CommonConst.ACTIVITY_RESULT_SELECT_KEY, selectResultInfo);
         setResult(type, intent);
         finish();
+    }
+
+    private void saveShareList(SelectResultInfo selectResultInfo){
+        AppSharePreferenceMgr.putSerializableEntity(this,selectResultInfo.getKey(),selectResultInfo);
+
+        String string = (String) AppSharePreferenceMgr.get(this,IDef.RECENT_TARGET_SELECT_LIST_KEY,"");
+        String[] splits = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        if (!TextUtils.isEmpty(string)) {
+            if(string.contains(selectResultInfo.getKey())){
+                return;
+            }
+            splits = string.split(IDef.TARGET_LIST_SPLIT);
+            if(splits.length < IDef.MAX_HISTORY_SIZE){
+                stringBuilder.append(selectResultInfo.getKey());
+                stringBuilder.append(IDef.TARGET_LIST_SPLIT);
+                stringBuilder.append(string);
+            }else{
+                stringBuilder.append(selectResultInfo.getKey());
+                stringBuilder.append(IDef.TARGET_LIST_SPLIT);
+                for(int i = 0;i < IDef.MAX_HISTORY_SIZE -1;i ++){
+                    stringBuilder.append(splits[i]);
+                    stringBuilder.append(IDef.TARGET_LIST_SPLIT);
+                }
+                AppSharePreferenceMgr.remove(this,splits[IDef.MAX_HISTORY_SIZE -1]);
+            }
+        }else{
+            stringBuilder.append(selectResultInfo.getKey());
+            stringBuilder.append(IDef.TARGET_LIST_SPLIT);
+        }
+
+        AppSharePreferenceMgr.put(this,IDef.RECENT_TARGET_SELECT_LIST_KEY,stringBuilder.toString());
+        AppSharePreferenceMgr.putSerializableEntity(this,selectResultInfo.getKey(),selectResultInfo);
     }
 
     @Override
@@ -303,16 +367,30 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             resultKey = ((CityInfo) object).getCityName();
         } else if (object instanceof SuggestionResult.SuggestionInfo) {
             mSuggestionInfo = ((SuggestionResult.SuggestionInfo) object);
+        }else if(object instanceof SelectResultInfo){
+            mSuggestionInfo = ((SelectResultInfo) object);
         }
         selectFinish();
         finish();
     }
 
     @Override
-    protected void onDestroy() {
+    public void onItemDelete(View view, int position) {
+        Object object = mCustomAdapter.getList().get(position);
+        if(object instanceof SelectResultInfo){
+            AppSharePreferenceMgr.remove(this,((SelectResultInfo) object).getKey());
+            mCustomAdapter.removeData(object);
+        }
+    }
+
+    private synchronized void release(){
         // 基于DEMO的5.2 退出事件管理器
         mRecognizerImp.release();
         mSuggestionSearch.destroy();
+    }
+    @Override
+    protected void onDestroy() {
+        release();
         super.onDestroy();
     }
 
@@ -322,7 +400,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             List list = suggestionResult.getAllSuggestions();
             mCustomAdapter.setData(list);
             //处理sug检索结果
-            if (list == null && list.size() <= 0) {
+            if (list == null || list.size() <= 0) {
                 sugResult.setText(getString(R.string.no_sug_result));
             } else {
                 sugResult.setText(getString(R.string.sug_result));

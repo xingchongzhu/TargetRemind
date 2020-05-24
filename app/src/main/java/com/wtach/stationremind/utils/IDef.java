@@ -46,4 +46,8 @@ public interface IDef {
 	public static final int Msg_Auto_Tick = 124;
 
 	public static final String DEFAULTCITY = "深圳";
-};
+	public static final String RECENT_TARGET_SELECT_LIST_KEY = "recent_target_select_list_key";
+
+	public static final String TARGET_LIST_SPLIT = "#";
+	public static final int  MAX_HISTORY_SIZE = 10;
+}

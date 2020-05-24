@@ -5,32 +5,26 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/current_station"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/search_height"
-        android:layout_gravity="center_vertical"
-        android:background="@drawable/search_edittext_shape_top"
-        android:drawableLeft="@drawable/start_green_route"
-        android:drawablePadding="5dp"
-        android:gravity="center_vertical"
-        android:hint="@string/current_location"
-        android:textColor="@color/blue"
-        android:singleLine="true"
-        android:textSize="@dimen/textvie_item_text_size" />
-
-
-    <TextView
         android:id="@+id/target_station"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/search_height"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:background="@drawable/search_edittext_shape_bottom"
-        android:drawableLeft="@drawable/end_red_route"
-        android:drawablePadding="5dp"
+        android:background="@drawable/search_edittext_shape"
+        android:drawableLeft="@drawable/start_green_route"
+        android:drawableRight="@drawable/ic_add"
         android:gravity="center_vertical"
-        android:hint="@string/seletc_target_station_title"
+        android:text="@string/seletc_target_station_title"
         android:singleLine="true"
-        android:textColor="@color/blue"
+        android:drawablePadding="5dp"
+        android:paddingLeft="5dp"
+        android:textColor="@color/text_view_color"
         android:textSize="@dimen/textvie_item_text_size" />
 
+    <com.heytap.wearable.support.recycler.widget.RecyclerView
+        android:id="@+id/recyler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:fadeScrollbars="true"
+        android:scrollbars="vertical" />
 </LinearLayout>
