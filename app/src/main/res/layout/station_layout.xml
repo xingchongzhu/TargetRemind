@@ -5,15 +5,12 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/target_station"
+        android:id="@+id/select_target_hint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:background="@drawable/search_edittext_shape"
-        android:drawableLeft="@drawable/start_green_route"
-        android:drawableRight="@drawable/ic_add"
-        android:gravity="center_vertical"
-        android:text="@string/seletc_target_station_title"
+        android:gravity="center"
+        android:hint="@string/add_target_station_hint"
         android:singleLine="true"
         android:drawablePadding="5dp"
         android:paddingLeft="5dp"

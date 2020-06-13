@@ -6,7 +6,12 @@ import android.content.SharedPreferences;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.ImageView;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.wtach.stationremind.object.SelectResultInfo;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,6 +21,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -159,6 +167,31 @@ public class AppSharePreferenceMgr {
         SharedPreferences.Editor editor = share.edit();
         // 将编码后的字符串写到base64.xml文件中
         editor.putString(key, objectStr);
+        SharedPreferencesCompat.apply(editor);
+    }
+
+    public static  List<SelectResultInfo> getSerializableList(Context context, String key){
+        SharedPreferences sharePre = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+        String json = sharePre.getString(key, null);
+        List<SelectResultInfo > list = new ArrayList<SelectResultInfo>();
+        if (json != null) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<SelectResultInfo>>(){}.getType();
+            list = gson.fromJson(json, type);
+        }
+        return list;
+    }
+
+    public static void putSerializableList(Context context, String key, List<Object> list){
+        SharedPreferences share =  context.getSharedPreferences(FILE_NAME,
+                Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        Log.d("zxc", "saved json is "+ json);
+
+        SharedPreferences.Editor editor = share.edit();
+        // 将编码后的字符串写到base64.xml文件中
+        editor.putString(key, json);
         SharedPreferencesCompat.apply(editor);
     }
 

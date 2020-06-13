@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:layout_marginBottom="@dimen/bottom_btn_margin">
+
+    <Button
+        android:id="@+id/add_target_btn"
+        android:layout_width="@dimen/bottom_btn_icon_size"
+        android:layout_height="@dimen/bottom_btn_icon_size"
+        android:background="@drawable/ic_add_selector"
+        android:textSize="8dp"
+        android:textColor="@color/text_view_color"
+        android:layout_marginRight="@dimen/bottom_btn_margin" />
+    <Button
+        android:id="@+id/start_remind_btn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:textColor="@color/text_view_color"
+        android:background="@drawable/ic_start"
+        android:textSize="8dp"
+        android:layout_marginRight="@dimen/bottom_btn_margin" />
+    <Button
+        android:id="@+id/favrite_btn"
+        android:layout_width="@dimen/bottom_btn_icon_size"
+        android:layout_height="@dimen/bottom_btn_icon_size"
+        android:textColor="@color/text_view_color"
+        android:background="@drawable/ic_favorites_selector"
+        android:textSize="8dp" />
+</LinearLayout>

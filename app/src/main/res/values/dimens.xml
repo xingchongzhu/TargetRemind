@@ -29,4 +29,6 @@
     <dimen name="voice_icon_size">25dp</dimen>
     <dimen name="dimiss_icon_size">38dp</dimen>
     <dimen name="radius_padding">5dp</dimen>
+    <dimen name="bottom_btn_icon_size">35dp</dimen>
+    <dimen name="bottom_btn_margin">10dp</dimen>
 </resources>

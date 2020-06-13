@@ -12,8 +12,10 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -42,6 +44,7 @@ import com.wtach.stationremind.utils.AppSharePreferenceMgr;
 import com.wtach.stationremind.utils.CommonConst;
 import com.wtach.stationremind.utils.CommonFuction;
 import com.wtach.stationremind.utils.DisplayUtils;
+import com.wtach.stationremind.utils.FavoriteManager;
 import com.wtach.stationremind.utils.FileUtil;
 import com.wtach.stationremind.utils.IDef;
 import com.wtach.stationremind.utils.NetWorkUtils;
@@ -56,11 +59,13 @@ import static com.wtach.stationremind.utils.CommonConst.REQUES_SEARCH_ACTIVITY_C
 import static com.wtach.stationremind.utils.CommonConst.REQUES_SEARCH_ACTIVITY_END_STATION_CODE;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener, LoadDataListener,
-        RemonderLocationService.ArrivedCallback, OnRecyItemClickListener,Runnable {
+        RemonderLocationService.ArrivedCallback, OnRecyItemClickListener,Runnable ,CustomAdapter.AdapterChangeListener {
     private final String TAG = "MainActivity";
-    private Button startRemindBtn;
+    private View startRemindBtn;
     private TextView selectCity;
-    private TextView targetStationView;
+    private View collect;
+    private TextView selectTargetHint;
+    private View targetStationView;
     private TextView currentStationView;
     private RecyclerView mRecyclerView;
     private DancingView dancingView;
@@ -99,14 +104,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private void initView() {
         startRemindBtn = findViewById(R.id.start_remind_btn);
         currentStationView = findViewById(R.id.current_station);
-        targetStationView = findViewById(R.id.target_station);
+        targetStationView = findViewById(R.id.add_target_btn);
         selectCity = findViewById(R.id.select_city);
         dancingView = findViewById(R.id.dancing_ball);
         serachLayoutManagerRoot = findViewById(R.id.serach_layout_manager_root);
+        selectTargetHint = findViewById(R.id.select_target_hint);
+        collect = findViewById(R.id.collect);
 
         startRemindBtn.setOnClickListener(this);
         targetStationView.setOnClickListener(this);
         selectCity.setOnClickListener(this);
+        collect.setOnClickListener(this);
 
         initRecycle();
         startRemindBtn.setEnabled(false);
@@ -136,6 +144,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     private void initAdapter(List<Object> list) {
         mCustomAdapter = new CustomAdapter(list);
+        mCustomAdapter.setAdapterChangeListener(this);
         mCustomAdapter.setOnRecyItemClickListener(this);
         mRecyclerView.setAdapter(mCustomAdapter);
     }
@@ -148,9 +157,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     updateStartBtnState();
                 }
                 break;
-            case R.id.target_station:
+            case R.id.add_target_btn:
                 StartActivityUtils.startActivity(this,SearchActivity.class, REQUES_SEARCH_ACTIVITY_END_STATION_CODE,
                         CommonConst.ACTIVITY_SELECT_TYPE_KEY, REQUES_SEARCH_ACTIVITY_END_STATION_CODE);
+                break;
+            case R.id.collect:
+                addFavorite(new NameCallBack() {
+                    @Override
+                    public void nameComplete(String name) {
+                        updateCollectState(name);
+                    }
+                });
                 break;
             case R.id.select_city:
                // StartActivityUtils.startActivity(this,SearchActivity.class, REQUES_SEARCH_ACTIVITY_CITY_CODE,
@@ -163,15 +180,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         if(mRemonderLocationService != null) {
             if (!mRemonderLocationService.isReminder() && mCustomAdapter.getItemCount() > 0) {
                 mRemonderLocationService.setStartReminder();
-                startRemindBtn.setText(R.string.stop_remind);
-                startRemindBtn.setBackgroundResource(R.drawable.ic_stop_bg);
+                //startRemindBtn.setText(R.string.stop_remind);
+                startRemindBtn.setBackgroundResource(R.drawable.ic_pause);
                 dancingView.startAnimation();
                 serachLayoutManagerRoot.setVisibility(View.GONE);
             } else {
                 dancingView.stopAnimation();
                 mRemonderLocationService.setCancleReminder();
-                startRemindBtn.setBackgroundResource(R.drawable.ic_start_bg);
-                startRemindBtn.setText(R.string.start_remind);
+                startRemindBtn.setBackgroundResource(R.drawable.ic_start);
+                //startRemindBtn.setText(R.string.start_remind);
                 serachLayoutManagerRoot.setVisibility(View.VISIBLE);
             }
         }else{
@@ -358,5 +375,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         if(mRemonderLocationService != null) {
             mRemonderLocationService.removetReminder(selectResultInfo);
         }
+    }
+
+    @Override
+    public void notifyChange(int num) {
+        updateTargetNumberHint(num);
+    }
+
+    private void updateTargetNumberHint(int number){
+        if(number > 0) {
+            selectTargetHint.setGravity(ViewGroup.TEXT_ALIGNMENT_TEXT_START);
+            selectTargetHint.setText(String.format(getString(R.string.select_target_numbuer),number));
+            collect.setVisibility(View.VISIBLE);
+        }else{
+            selectTargetHint.setText("");
+            selectTargetHint.setGravity(ViewGroup.TEXT_ALIGNMENT_CENTER);
+            collect.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateCollectState(String name){
+        boolean isCollected = FavoriteManager.saveShareList(this,name,mCustomAdapter.getList());
+        if(isCollected) {
+            collect.setBackgroundResource(R.drawable.ic_collected);
+        }else{
+            collect.setBackgroundResource(R.drawable.ic_collect);
+        }
+    }
+
+    @Override
+    public void handleMsg(Message msg) {
+
     }
 }

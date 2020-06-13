@@ -148,7 +148,7 @@ public class AlarmActivity extends AlarmBaseActivity
 
     private int mInitialPointerIndex = MotionEvent.INVALID_POINTER_ID;
 
-    private long[] vibrator = {500, 500};
+   private TimerKlaxon mTimerKlaxon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,9 +192,11 @@ public class AlarmActivity extends AlarmBaseActivity
         mPulseAnimator.setInterpolator(PULSE_INTERPOLATOR);
         mPulseAnimator.setRepeatCount(ValueAnimator.INFINITE);
         mPulseAnimator.start();
+        Log.d("zxc","onCreate");
         //VibratorUtil.Vibrate(this,vibrator);
         Intent intent = getIntent();
-        TimerKlaxon.getInstance(this).start(this, intent.getBooleanExtra("arrive", true));
+        mTimerKlaxon = new TimerKlaxon(this);
+        mTimerKlaxon.start(this, intent.getBooleanExtra("arrive", true));
         titleTextView.setText(intent.getStringExtra("title"));
         hintText = intent.getBooleanExtra("arrive", true)?getResources().getString(R.string.alarm_alert_off_text):
                 getResources().getString(R.string.alarm_alert_snoozed_text);
@@ -321,7 +323,10 @@ public class AlarmActivity extends AlarmBaseActivity
                 snooze();
             } else if (dismissFraction == 1.0f) {
                 dismiss();
-            } else {
+            }else{
+                snooze();
+            }
+            if(false){
                 if (snoozeFraction > 0.0f || dismissFraction > 0.0f) {
                     // Animate back to the initial state.
                     AnimatorUtils.reverse(mAlarmAnimator, mSnoozeAnimator, mDismissAnimator);
@@ -332,7 +337,6 @@ public class AlarmActivity extends AlarmBaseActivity
                     int centerx = out[1]+mAlarmButton.getWidth()/2;
                     hintDismiss(x < centerx);
                 }
-
                 // Restart the pulse.
                 mPulseAnimator.setRepeatCount(ValueAnimator.INFINITE);
                 if (!mPulseAnimator.isStarted()) {
@@ -410,7 +414,7 @@ public class AlarmActivity extends AlarmBaseActivity
         getAlertAnimator(mSnoozeButton, hintText, infoText,
                 accessibilityText, colorAccent, colorAccent).start();
         // VibratorUtil.StopVibrate(this);
-        TimerKlaxon.getInstance(this).stop(this);
+       mTimerKlaxon.stop(this);
 
     }
 
@@ -420,7 +424,7 @@ public class AlarmActivity extends AlarmBaseActivity
         getAlertAnimator(mDismissButton, getResources().getString(R.string.stop_hint), null /* infoText */,
                 getString(R.string.alarm_alert_off_text) /* accessibilityText */,
                 Color.BLACK, mCurrentHourColor).start();
-        TimerKlaxon.getInstance(this).stop(this);
+       mTimerKlaxon.stop(this);
     }
 
     private void setAnimatedFractions(float snoozeFraction, float dismissFraction) {

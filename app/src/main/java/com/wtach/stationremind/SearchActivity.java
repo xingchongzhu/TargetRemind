@@ -62,7 +62,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 public class SearchActivity extends BaseActivity implements View.OnClickListener, OnRecyItemClickListener,
-        IStatus, RecognizerImp.HandleResultCallback {
+        IStatus{
     private final String TAG = "SearchActivity";
     private HeyBackTitleBar back_titlebar;
     private RecyclerView mRecyclerView;
@@ -73,7 +73,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     private String resultKey;
     private CustomAdapter mCustomAdapter;
-    private RecognizerImp mRecognizerImp;
+    //private RecognizerImp mRecognizerImp;
     private AudioWaveView audioview;
     /**
      * 控制UI按钮的状态
@@ -89,13 +89,22 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         //getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
         super.onCreate(savedInstanceState);
+        mRecognizerImp = new RecognizerImp(this, this);
         setContentView(R.layout.activity_search_layout);
         init();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mRecognizerImp != null) {
+            mRecognizerImp.cancel();
+        }
+    }
+
     private void init() {
         status = STATUS_NONE;
-        mRecognizerImp = new RecognizerImp(this, this);
+        //mRecognizerImp = new RecognizerImp(this, this);
         SDKInitializer.initialize(getApplicationContext());
         mSuggestionSearch = SuggestionSearch.newInstance();
         mSuggestionSearch.setOnGetSuggestionResultListener(listener);
@@ -125,7 +134,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         //添加自定义分割线
         DividerItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         divider.setDrawable(ContextCompat.getDrawable(this, R.drawable.custom_divider));
-        mRecyclerView.addItemDecoration(divider);
+        //mRecyclerView.addItemDecoration(divider);
 
         txtResult.setOnClickListener(this);
         recordBtn.setOnClickListener(this);
@@ -176,12 +185,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 break;
         }
         initAdapter(list);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mRecognizerImp.cancel();
     }
 
     private void initAdapter(List<Object> list) {
@@ -383,11 +386,12 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
-    private synchronized void release(){
-        // 基于DEMO的5.2 退出事件管理器
-        mRecognizerImp.release();
+    @Override
+    protected void release(){
         mSuggestionSearch.destroy();
+        mRecognizerImp.release();
     }
+
     @Override
     protected void onDestroy() {
         release();

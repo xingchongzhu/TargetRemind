@@ -17,4 +17,5 @@
     <color name="water_ripple_color">#b1ffffff</color>
     <color name="autdio_wave_color">#da099ff0</color>
     <color name="text_view_color">#EDEDED</color>
+    <color name="dialog_backgournd_color">#6BC1C1C2</color>
 </resources>

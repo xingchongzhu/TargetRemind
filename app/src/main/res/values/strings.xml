@@ -39,5 +39,13 @@
     <string name="open_gps_content" translatable="false">应用需要开启Gps定位功能并且需要连接可用网络</string>
     <string name="start_remind_fail" translatable="false">开启失败，请检查网络或gps是否可用</string>
     <string name="max_target_count_hint" translatable="false">不能添加更多提醒位置</string>
+
+    <string name="add_target_station_hint" translatable="false">+添加目标位置，目录查看收藏列表</string>
+    <string name="select_target_numbuer" translatable="false">已添加提醒目 %d 个</string>
+    <string name="name_same_hnit" translatable="false">重复命名</string>
+    <string name="name_same_empty_hint" translatable="false">命名不能为空</string>
+    <string name="name_favorite_title" translatable="false">命名</string>
+    <string name="default_name" translatable="false">点击命名</string>
+    <string name="cancle" translatable="false">取消</string>
 </resources>
 

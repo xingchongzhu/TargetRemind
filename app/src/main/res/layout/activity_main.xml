@@ -39,6 +39,27 @@
         android:textSize="@dimen/textvie_item_text_size"
         tools:ignore="MissingConstraints" />
 
+    <View
+        android:id="@+id/collect"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:background="@drawable/ic_collect"
+        android:layout_gravity="center_vertical"
+        app:layout_goneMarginRight="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/select_city"
+        android:drawableLeft="@drawable/ic_location"
+        android:gravity="center_vertical"
+        android:hint="@string/current_location"
+        android:textColor="@color/blue"
+        android:drawablePadding="5dp"
+        android:singleLine="true"
+        android:textSize="@dimen/textvie_item_text_size"
+        android:visibility="gone"
+        tools:ignore="MissingConstraints">
+
+    </View>
 
     <include
         android:id="@+id/serach_layout_manager_root"
@@ -73,18 +94,14 @@
         tools:ignore="MissingConstraints">
 
     </com.wtach.stationremind.views.DancingView>
-    <Button
-        android:id="@+id/start_remind_btn"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+
+    <include
+        android:id="@+id/bottom_btn_layout"
+        layout="@layout/bottom_btn_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:background="@drawable/ic_start_bg"
-        android:textColor="#ffffff"
-        android:textSize="8dp"
-        android:text="@string/start_remind"
-        tools:ignore="MissingConstraints" />
-
+        android:background="@drawable/ic_start_bg" />
 </androidx.constraintlayout.widget.ConstraintLayout>

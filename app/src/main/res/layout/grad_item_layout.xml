@@ -4,6 +4,7 @@
     android:focusable="true"
     android:background="@drawable/search_edittext_shape"
     android:layout_width="match_parent"
+    android:layout_margin="1dp"
     android:layout_height="wrap_content">
 
     <TextView

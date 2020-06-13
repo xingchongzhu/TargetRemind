@@ -25,8 +25,13 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
     private List<Object> list;
 
     private OnRecyItemClickListener mOnRecyItemClickListener;
+    private AdapterChangeListener mAdapterChangeListener;
     public CustomAdapter(List<Object> list){
         this.list = list;
+    }
+
+    public void setAdapterChangeListener(AdapterChangeListener mAdapterChangeListener) {
+        this.mAdapterChangeListener = mAdapterChangeListener;
     }
 
     public List<Object> getList() {
@@ -39,6 +44,7 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
         }
         this.list = list;
         notifyDataSetChanged();
+        notifyCountChange();
     }
 
     public void removeData(Object object){
@@ -46,6 +52,7 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             this.list.remove(object);
             notifyDataSetChanged();
         }
+        notifyCountChange();
     }
 
     public void addData(Object object){
@@ -54,6 +61,13 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
         }
         this.list.add(0,object);
         notifyDataSetChanged();
+        notifyCountChange();
+    }
+
+    private void notifyCountChange(){
+        if(mAdapterChangeListener != null){
+            mAdapterChangeListener.notifyChange(getItemCount());
+        }
     }
 
     public void setOnRecyItemClickListener(OnRecyItemClickListener mOnRecyItemClickListener) {
@@ -170,5 +184,7 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
         }
     }
 
-
+    public interface AdapterChangeListener{
+        void notifyChange(int num);
+    }
 }

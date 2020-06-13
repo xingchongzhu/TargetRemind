@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.LinkProperties;
 import android.net.Network;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.baidu.mapapi.SDKInitializer;
 import com.heytap.wearable.support.widget.HeyDialog;
+import com.wtach.stationremind.recognize.RecognizerImp;
 import com.wtach.stationremind.utils.AppSharePreferenceMgr;
 import com.wtach.stationremind.utils.CommonConst;
 import com.wtach.stationremind.utils.NetWorkUtils;
@@ -38,7 +40,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivity extends Activity implements RecognizerImp.HandleResultCallback{
 
     private final String TAG = "BaseActivity";
     private final int SDK_PERMISSION_REQUEST = 127;
@@ -49,9 +51,12 @@ public abstract class BaseActivity extends Activity {
     List<String> mPermissionList = new ArrayList<>();
 
     private HeyDialog netWorkDialog;
+    private HeyDialog favoriteDialog;
+    protected RecognizerImp mRecognizerImp;
+
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @TargetApi(23)
@@ -151,6 +156,7 @@ public abstract class BaseActivity extends Activity {
     @Override
     protected void onDestroy() {
         dismissNetWorkDialog();
+        release();
         super.onDestroy();
     }
 
@@ -177,6 +183,35 @@ public abstract class BaseActivity extends Activity {
         netWorkDialog.show();
     }
 
+    protected void addFavorite(final NameCallBack nameCallBack){
+        if(favoriteDialog != null && favoriteDialog.isShowing()){
+            return;
+        }
+        final StringBuffer name = new StringBuffer();
+        HeyDialog.HeyBuilder builder = new HeyDialog.HeyBuilder(this);
+        builder.setContentViewStyle(HeyDialog.STYLE_CONTENT).setTitle(this.getString(R.string.name_favorite_title))
+                .setMessage(getString(R.string.default_name))
+                .setNegativeButton(getResources().getString(R.string.cancle), null)
+                .setPositiveButton(getString(R.string.enture), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(nameCallBack != null){
+                            nameCallBack.nameComplete(name.toString());
+                        }
+                    }
+                });
+        favoriteDialog = builder.create();
+        favoriteDialog.getMessage().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                name.append("测试");
+                favoriteDialog.getMessage().setText(name.toString());
+                Toast.makeText(BaseActivity.this,name.toString(),Toast.LENGTH_LONG).show();
+            }
+        });
+        favoriteDialog.show();
+    }
+
     private void showNetWorkDialog(String title,String context){
         if(netWorkDialog != null){
             netWorkDialog.dismiss();
@@ -187,5 +222,12 @@ public abstract class BaseActivity extends Activity {
                 .setPositiveButton("确定", null);
         netWorkDialog = builder.create();
         netWorkDialog.show();
+    }
+
+    public interface NameCallBack{
+        void nameComplete(String name);
+    }
+
+    protected void release(){
     }
 }

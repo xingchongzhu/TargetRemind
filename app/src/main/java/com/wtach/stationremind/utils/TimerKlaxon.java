@@ -34,20 +34,20 @@ public class TimerKlaxon {
     private static final long[] VIBRATE_PATTERN = {500, 500};
     private AsyncRingtonePlayer sAsyncRingtonePlayer;
     private Vibrator mVibrator;
-    private static TimerKlaxon mTimerKlaxon;
+    //private static TimerKlaxon mTimerKlaxon;
 
-    private TimerKlaxon(Context context) {
+    public TimerKlaxon(Context context) {
         mVibrator = ((Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE));
     }
 
-    public static TimerKlaxon getInstance(Context context){
+    /*public static TimerKlaxon getInstance(Context context){
         if(mTimerKlaxon == null){
             synchronized (TimerKlaxon.class){
                 mTimerKlaxon = new TimerKlaxon(context);
             }
         }
         return mTimerKlaxon;
-    }
+    }*/
 
     public void stop(Context context) {
         Log.i(TAG, "TimerKlaxon.stop()");
