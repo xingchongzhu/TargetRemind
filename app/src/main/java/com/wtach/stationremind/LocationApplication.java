@@ -6,13 +6,17 @@ import android.app.Application;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
+import android.os.Message;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.baidu.mapapi.SDKInitializer;
+import com.wtach.stationremind.recognize.RecognizerImp;
 import com.wtach.stationremind.service.LocationService;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 //import com.squareup.leakcanary.LeakCanary;
@@ -51,5 +55,4 @@ public class LocationApplication extends Application {
         }
         return null;
     }
-
 }

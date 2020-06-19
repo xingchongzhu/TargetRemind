@@ -51,8 +51,6 @@ public abstract class BaseActivity extends Activity implements RecognizerImp.Han
     List<String> mPermissionList = new ArrayList<>();
 
     private HeyDialog netWorkDialog;
-    private HeyDialog favoriteDialog;
-    protected RecognizerImp mRecognizerImp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,35 +181,6 @@ public abstract class BaseActivity extends Activity implements RecognizerImp.Han
         netWorkDialog.show();
     }
 
-    protected void addFavorite(final NameCallBack nameCallBack){
-        if(favoriteDialog != null && favoriteDialog.isShowing()){
-            return;
-        }
-        final StringBuffer name = new StringBuffer();
-        HeyDialog.HeyBuilder builder = new HeyDialog.HeyBuilder(this);
-        builder.setContentViewStyle(HeyDialog.STYLE_CONTENT).setTitle(this.getString(R.string.name_favorite_title))
-                .setMessage(getString(R.string.default_name))
-                .setNegativeButton(getResources().getString(R.string.cancle), null)
-                .setPositiveButton(getString(R.string.enture), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(nameCallBack != null){
-                            nameCallBack.nameComplete(name.toString());
-                        }
-                    }
-                });
-        favoriteDialog = builder.create();
-        favoriteDialog.getMessage().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                name.append("测试");
-                favoriteDialog.getMessage().setText(name.toString());
-                Toast.makeText(BaseActivity.this,name.toString(),Toast.LENGTH_LONG).show();
-            }
-        });
-        favoriteDialog.show();
-    }
-
     private void showNetWorkDialog(String title,String context){
         if(netWorkDialog != null){
             netWorkDialog.dismiss();
@@ -226,6 +195,7 @@ public abstract class BaseActivity extends Activity implements RecognizerImp.Han
 
     public interface NameCallBack{
         void nameComplete(String name);
+        void startRecoginze();
     }
 
     protected void release(){

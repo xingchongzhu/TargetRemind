@@ -1,32 +1,17 @@
 package com.wtach.stationremind;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
-import android.os.PersistableBundle;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.TextView;
 
-import com.baidu.aip.asrwakeup3.core.mini.AutoCheck;
 import com.baidu.aip.asrwakeup3.core.recog.IStatus;
-import com.baidu.aip.asrwakeup3.core.recog.MyRecognizer;
-import com.baidu.aip.asrwakeup3.core.recog.listener.IRecogListener;
-import com.baidu.aip.asrwakeup3.core.recog.listener.MessageStatusRecogListener;
-import com.baidu.aip.asrwakeup3.uiasr.params.CommonRecogParams;
-import com.baidu.aip.asrwakeup3.uiasr.params.OfflineRecogParams;
-import com.baidu.aip.asrwakeup3.uiasr.params.OnlineRecogParams;
 import com.baidu.mapapi.SDKInitializer;
-import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
 import com.baidu.mapapi.search.sug.SuggestionResult;
 import com.baidu.mapapi.search.sug.SuggestionSearch;
@@ -41,9 +26,7 @@ import com.wtach.stationremind.listener.OnRecyItemClickListener;
 import com.wtach.stationremind.model.item.bean.CityInfo;
 import com.wtach.stationremind.model.item.bean.StationInfo;
 import com.wtach.stationremind.object.SelectResultInfo;
-import com.wtach.stationremind.recognize.RecogizeManager;
-import com.wtach.stationremind.recognize.RecognizerImp;
-import com.wtach.stationremind.search.CustomAdapter;
+import com.wtach.stationremind.adapter.CustomAdapter;
 import com.wtach.stationremind.utils.AppSharePreferenceMgr;
 import com.wtach.stationremind.utils.CommonConst;
 import com.wtach.stationremind.utils.CommonFuction;
@@ -51,14 +34,9 @@ import com.wtach.stationremind.utils.IDef;
 import com.wtach.stationremind.utils.Utils;
 import com.wtach.stationremind.views.AudioWaveView;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 public class SearchActivity extends BaseActivity implements View.OnClickListener, OnRecyItemClickListener,
@@ -73,7 +51,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     private String resultKey;
     private CustomAdapter mCustomAdapter;
-    //private RecognizerImp mRecognizerImp;
     private AudioWaveView audioview;
     /**
      * 控制UI按钮的状态
@@ -89,17 +66,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         //getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
         super.onCreate(savedInstanceState);
-        mRecognizerImp = new RecognizerImp(this, this);
         setContentView(R.layout.activity_search_layout);
         init();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if(mRecognizerImp != null) {
-            mRecognizerImp.cancel();
-        }
+        RecognizerObserver.getInstance(this).addHandleResultCallback(this);
     }
 
     private void init() {
@@ -210,7 +179,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 if (checkoutGpsAndNetWork() && getPersimmions()) {
                     switch (status) {
                         case STATUS_NONE: // 初始状态
-                            mRecognizerImp.start();
+                            RecognizerObserver.getInstance(this).startRecognizer();
                             status = STATUS_WAITING_READY;
                             updateBtnTextByStatus();
                             //txtResult.setText("");
@@ -220,13 +189,13 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                         case STATUS_SPEAKING: // 用户开始讲话
                         case STATUS_FINISHED: // 一句话识别语音结束
                         case STATUS_RECOGNITION: // 识别中
-                            mRecognizerImp.stop();
+                            RecognizerObserver.getInstance(this).stopRecognizer();
                             status = STATUS_STOPPED; // 引擎识别中
                             updateBtnTextByStatus();
                             break;
                         case STATUS_LONG_SPEECH_FINISHED: // 长语音识别结束
                         case STATUS_STOPPED: // 引擎识别中
-                            mRecognizerImp.cancel();
+                            RecognizerObserver.getInstance(this).cancelRecognizer();
                             status = STATUS_NONE; // 识别结束，回到初始状态
                             updateBtnTextByStatus();
                             break;
@@ -239,6 +208,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void handleMsg(Message msg) {
+        //Log.d(TAG,"handleMsg msg = "+msg);
         switch (msg.what) { // 处理MessageStatusRecogListener中的状态回调
             case STATUS_FINISHED:
                 if (msg.arg2 == 1) {
@@ -250,8 +220,10 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                     if (TextUtils.isEmpty(shpno)) {
                         shpno = IDef.DEFAULTCITY;
                     }
-                    mSuggestionSearch.requestSuggestion(new SuggestionSearchOption().city(shpno).keyword(result));
-                    txtResult.setText(shpno + " " + result.trim().replace("，", ""));
+                    if(result.length() > 0) {
+                        mSuggestionSearch.requestSuggestion(new SuggestionSearchOption().city(shpno).keyword(result));
+                        txtResult.setText(shpno + " " + result.trim().replace("，", ""));
+                    }
                     audioview.setVisibility(View.GONE);
                 }
                 status = msg.what;
@@ -389,11 +361,11 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void release(){
         mSuggestionSearch.destroy();
-        mRecognizerImp.release();
     }
 
     @Override
     protected void onDestroy() {
+        RecognizerObserver.getInstance(this).removeHandleResultCallback(this);
         release();
         super.onDestroy();
     }

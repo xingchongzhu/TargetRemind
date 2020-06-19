@@ -1,4 +1,4 @@
-package com.wtach.stationremind.search;
+package com.wtach.stationremind.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +11,7 @@ import com.wtach.stationremind.R;
 import com.wtach.stationremind.listener.OnRecyItemClickListener;
 import com.wtach.stationremind.model.item.bean.CityInfo;
 import com.wtach.stationremind.model.item.bean.StationInfo;
+import com.wtach.stationremind.object.CollectInfo;
 import com.wtach.stationremind.object.SelectResultInfo;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
     public static final int StationItemViewType = 2;
     public static final int SugInfoItemViewType = 3;
     public static final int SelectResultInfoItemViewType = 4;
+    public static final int CollectionInfoItemViewType = 5;
     private List<Object> list;
 
     private OnRecyItemClickListener mOnRecyItemClickListener;
@@ -84,6 +86,8 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             return SugInfoItemViewType;
         }else if (list.get(i) instanceof SelectResultInfo){
             return SelectResultInfoItemViewType;
+        }else if (list.get(i) instanceof CollectInfo){
+            return CollectionInfoItemViewType;
         }else{
              return -1;
         }
@@ -105,6 +109,9 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             case SelectResultInfoItemViewType:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.grad_item_layout, parent, false);
                 return new SelectResultViewHolder(view);
+            case CollectionInfoItemViewType:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.collection_item_layout, parent, false);
+                return new SelectResultViewHolder(view);
                 default:
         }
         return null;
@@ -122,6 +129,18 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             ((SelectResultViewHolder) viewHolder).textView.setText(((SelectResultInfo)list.get(position)).getKey());
             if(mOnRecyItemClickListener != null){
                 final View delete =  ((SelectResultViewHolder) viewHolder).delete;
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mOnRecyItemClickListener.onItemDelete(delete,position);
+                    }
+                });
+            }
+        }else if(viewHolder instanceof CollectionViewHolder){
+            CollectInfo collectInfo = (CollectInfo)list.get(position);
+            ((CollectionViewHolder) viewHolder).textView.setText(collectInfo.getName());
+            if(mOnRecyItemClickListener != null){
+                final View delete =  ((CollectionViewHolder) viewHolder).delete;
                 delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -178,6 +197,17 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
         View delete;
 
         public SelectResultViewHolder(View view) {
+            super(view);
+            textView = (TextView) view.findViewById(R.id.text);
+            delete = view.findViewById(R.id.delete);
+        }
+    }
+
+    static class CollectionViewHolder extends RecyclerView.ViewHolder {
+        TextView textView;
+        View delete;
+
+        public CollectionViewHolder(View view) {
             super(view);
             textView = (TextView) view.findViewById(R.id.text);
             delete = view.findViewById(R.id.delete);

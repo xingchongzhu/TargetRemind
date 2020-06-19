@@ -52,4 +52,5 @@ public interface IDef {
 	public static final int MAX_HISTORY_SIZE = 20;
 
 	public static final String FAVORITE_LIST_KEY = "favorite_list_key";
+	public static final String FAVORITE_LIST_NAME_KEY = "favorite_list_name_key";
 }

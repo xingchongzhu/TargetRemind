@@ -1,10 +1,6 @@
 package com.wtach.stationremind;
 
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -16,41 +12,29 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
-import com.baidu.mapapi.search.sug.SuggestionResult;
-import com.heytap.wearable.support.recycler.widget.DividerItemDecoration;
 import com.heytap.wearable.support.recycler.widget.GridLayoutManager;
-import com.heytap.wearable.support.recycler.widget.LinearLayoutManager;
 import com.heytap.wearable.support.recycler.widget.RecyclerView;
-import com.heytap.wearable.support.widget.HeyShapeButton;
-import com.heytap.wearable.support.widget.HeySingleDefaultItem;
 import com.wtach.stationremind.database.DataManager;
 import com.wtach.stationremind.listener.LoadDataListener;
 import com.wtach.stationremind.listener.LocationChangerListener;
 import com.wtach.stationremind.listener.OnRecyItemClickListener;
 import com.wtach.stationremind.model.item.bean.CityInfo;
-import com.wtach.stationremind.model.item.bean.StationInfo;
+import com.wtach.stationremind.object.FavoriteInfo;
 import com.wtach.stationremind.object.SelectResultInfo;
-import com.wtach.stationremind.recognize.RecogizeManager;
-import com.wtach.stationremind.search.CustomAdapter;
+import com.wtach.stationremind.adapter.CustomAdapter;
 import com.wtach.stationremind.service.LocationService;
 import com.wtach.stationremind.service.RemonderLocationService;
-import com.wtach.stationremind.utils.AppSharePreferenceMgr;
 import com.wtach.stationremind.utils.CommonConst;
 import com.wtach.stationremind.utils.CommonFuction;
-import com.wtach.stationremind.utils.DisplayUtils;
 import com.wtach.stationremind.utils.FavoriteManager;
 import com.wtach.stationremind.utils.FileUtil;
 import com.wtach.stationremind.utils.IDef;
 import com.wtach.stationremind.utils.NetWorkUtils;
-import com.wtach.stationremind.utils.PathSerachUtil;
 import com.wtach.stationremind.utils.StartActivityUtils;
-import com.wtach.stationremind.utils.Utils;
 import com.wtach.stationremind.views.DancingView;
 
 import java.util.List;
@@ -79,7 +63,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private String currentCity = IDef.DEFAULTCITY;
 
     private CustomAdapter mCustomAdapter;
-
+    private FavoriteInfo mFavoriteInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,6 +124,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     public void run() {
         List list = null;//Utils.getHistoryTargets(this);
         initAdapter(list);
+        getFavoriteList();
+    }
+
+    public void getFavoriteList(){
+        if(mFavoriteInfo != null){
+            mFavoriteInfo.clear();
+        }
+        mFavoriteInfo = FavoriteManager.getSerializableList(this);
+        if(mFavoriteInfo != null){
+            Log.d(TAG,"getFavoriteList "+mFavoriteInfo.toString());
+        }
     }
 
     private void initAdapter(List<Object> list) {
@@ -162,10 +157,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                         CommonConst.ACTIVITY_SELECT_TYPE_KEY, REQUES_SEARCH_ACTIVITY_END_STATION_CODE);
                 break;
             case R.id.collect:
-                addFavorite(new NameCallBack() {
+                RecognizerObserver.getInstance(this).showRecognizeDialog(this,new NameCallBack() {
                     @Override
                     public void nameComplete(String name) {
                         updateCollectState(name);
+                    }
+
+                    @Override
+                    public void startRecoginze() {
+
                     }
                 });
                 break;
@@ -261,6 +261,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         mDataManager.releaseResource();
         LocationService locationService = ((LocationApplication) getApplication()).locationService;
         locationService.getLocationClient().disableLocInForeground(true);
+        RecognizerObserver.getInstance(null).release();
     }
 
     private ServiceConnection connection = new ServiceConnection() {
@@ -401,6 +402,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         }else{
             collect.setBackgroundResource(R.drawable.ic_collect);
         }
+        getFavoriteList();
     }
 
     @Override

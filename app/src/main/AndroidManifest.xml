@@ -43,6 +43,7 @@
 
         <activity android:name="com.wtach.stationremind.SearchActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:configChanges="keyboard|keyboardHidden|mcc|mnc|navigation|orientation|screenSize|screenLayout|smallestScreenSize"
             >
         </activity>
