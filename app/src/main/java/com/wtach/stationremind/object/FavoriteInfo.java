@@ -1,12 +1,12 @@
 package com.wtach.stationremind.object;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FavoriteInfo {
-    private List<CollectInfo> favoriteMap = new ArrayList<>();
+    public List<CollectInfo> favoriteMap = new ArrayList<>();
+
+    private CollectInfo currentCollectInfo = null;
 
     public void addFavorite(CollectInfo collectInfo){
         favoriteMap.add(collectInfo);
@@ -20,6 +20,14 @@ public class FavoriteInfo {
         favoriteMap.clear();
     }
 
+    public void setCurrentCollectInfo(CollectInfo currentCollectInfo) {
+        this.currentCollectInfo = currentCollectInfo;
+    }
+
+    public CollectInfo getCurrentCollectInfo() {
+        return currentCollectInfo;
+    }
+
     @Override
     public String toString(){
         StringBuilder stringBuilder = new StringBuilder();
@@ -28,4 +36,17 @@ public class FavoriteInfo {
         }
         return stringBuilder.toString();
     }
+
+    public boolean collectIsExist(FavoriteInfo favoriteInfo, String key){
+        if(favoriteInfo == null){
+            return false;
+        }
+        for(CollectInfo collectInfo : favoriteMap){
+            if(collectInfo.getName().equals(key)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

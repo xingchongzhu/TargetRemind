@@ -11,19 +11,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:orientation="horizontal"
         android:layout_marginLeft="5dp">
         <TextView
-            android:id="@+id/text"
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/end_red_route"
-            android:gravity="center_vertical"
+            android:gravity="center_vertical|start"
             android:hint="@string/seletc_target_station_title"
             android:singleLine="true"
             android:drawablePadding="5dp"
             android:textColor="@color/blue"
-            android:paddingRight="30dp"
             android:textSize="@dimen/textvie_item_text_size" />
+        <TextView
+            android:id="@+id/text_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:hint="@string/seletc_target_station_title"
+            android:singleLine="true"
+            android:textColor="@color/edit_window"
+            android:paddingRight="30dp"
+            android:textSize="@dimen/textvie_item_content_text_size" />
     </LinearLayout>
     <View
         android:id="@+id/delete"

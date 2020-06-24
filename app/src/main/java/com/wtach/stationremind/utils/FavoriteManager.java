@@ -13,8 +13,8 @@ import java.util.List;
 
 public class FavoriteManager {
 
-    public static boolean saveShareList(Context context, String collectName, List<Object> collectList){
-        if (TextUtils.isEmpty(collectName) && collectList.size() > 0) {
+    public static boolean saveShareList(Context context, CollectInfo collectInfo){
+        if (TextUtils.isEmpty(collectInfo.getName()) && collectInfo.getList().size() > 0) {
             Toast.makeText(context,context.getString(R.string.name_same_empty_hint),Toast.LENGTH_LONG).show();
             return false;
         }
@@ -24,18 +24,18 @@ public class FavoriteManager {
         if (!TextUtils.isEmpty(string)) {
             splits = string.split(IDef.TARGET_LIST_SPLIT);
             for(String str : splits){
-                if(str.equals(collectName)){
-                    removeCollect(context,collectName);
+                if(str.equals(collectInfo.getName())){
+                    removeCollect(context,collectInfo.getName());
                     //Toast.makeText(context,context.getString(R.string.name_same_hnit),Toast.LENGTH_LONG).show();
                     return false;
                 }
             }
         }
-        stringBuilder.append(collectName);
+        stringBuilder.append(collectInfo.getName());
         stringBuilder.append(IDef.TARGET_LIST_SPLIT);
         AppSharePreferenceMgr.put(context,IDef.FAVORITE_LIST_NAME_KEY,stringBuilder.toString());
 
-        AppSharePreferenceMgr.putSerializableList(context,collectName,collectList);
+        AppSharePreferenceMgr.putSerializableList(context,collectInfo);
         return true;
     }
 

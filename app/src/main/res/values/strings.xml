@@ -47,5 +47,6 @@
     <string name="name_favorite_title" translatable="false">命名</string>
     <string name="default_name" translatable="false">点击命名</string>
     <string name="cancle" translatable="false">取消</string>
+    <string name="select_target_list" translatable="false">选择收藏目标</string>
 </resources>
 

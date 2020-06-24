@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.wtach.stationremind.listener.LoadDataListener;
 import com.wtach.stationremind.listener.LocationChangerListener;
 import com.wtach.stationremind.listener.OnRecyItemClickListener;
 import com.wtach.stationremind.model.item.bean.CityInfo;
+import com.wtach.stationremind.object.CollectInfo;
 import com.wtach.stationremind.object.FavoriteInfo;
 import com.wtach.stationremind.object.SelectResultInfo;
 import com.wtach.stationremind.adapter.CustomAdapter;
@@ -37,6 +39,7 @@ import com.wtach.stationremind.utils.NetWorkUtils;
 import com.wtach.stationremind.utils.StartActivityUtils;
 import com.wtach.stationremind.views.DancingView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.wtach.stationremind.utils.CommonConst.REQUES_SEARCH_ACTIVITY_CITY_CODE;
@@ -51,7 +54,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private TextView selectTargetHint;
     private View targetStationView;
     private TextView currentStationView;
-    private RecyclerView mRecyclerView;
+    private RecyclerView mTargetRecyclerView;
+    private RecyclerView mFavoriteRecyler;
     private DancingView dancingView;
     private View serachLayoutManagerRoot;
 
@@ -63,7 +67,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private String currentCity = IDef.DEFAULTCITY;
 
     private CustomAdapter mCustomAdapter;
+    private CustomAdapter mFavoriteCustomAdapter;
     private FavoriteInfo mFavoriteInfo;
+    private Handler handler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +106,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         targetStationView.setOnClickListener(this);
         selectCity.setOnClickListener(this);
         collect.setOnClickListener(this);
+        findViewById(R.id.favrite_btn).setOnClickListener(this);
 
         initRecycle();
         startRemindBtn.setEnabled(false);
@@ -106,10 +114,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void initRecycle() {
-        mRecyclerView = findViewById(R.id.recyler);
+        mTargetRecyclerView = findViewById(R.id.target_recyler);
+        mFavoriteRecyler = findViewById(R.id.favorite_recyler);
         GridLayoutManager layoutManager = new GridLayoutManager(this,2);
-        mRecyclerView.setLayoutManager(layoutManager);
+        mTargetRecyclerView.setLayoutManager(layoutManager);
+
+        GridLayoutManager favoritelayoutManager = new GridLayoutManager(this,1);
+        mFavoriteRecyler.setLayoutManager(favoritelayoutManager);
         loadHistoryTarget();
+        mCustomAdapter = initAdapter(null,mTargetRecyclerView);
+        mFavoriteCustomAdapter = initAdapter(null,mFavoriteRecyler);
     }
 
     private void loadHistoryTarget() {
@@ -122,9 +136,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void run() {
-        List list = null;//Utils.getHistoryTargets(this);
-        initAdapter(list);
         getFavoriteList();
+        final List list = mFavoriteInfo != null ? mFavoriteInfo.favoriteMap : null;//Utils.getHistoryTargets(this);
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                mFavoriteCustomAdapter.setData(list);
+                updateRecycleVisible(true);
+            }
+        });
+
     }
 
     public void getFavoriteList(){
@@ -137,11 +158,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
-    private void initAdapter(List<Object> list) {
-        mCustomAdapter = new CustomAdapter(list);
-        mCustomAdapter.setAdapterChangeListener(this);
-        mCustomAdapter.setOnRecyItemClickListener(this);
-        mRecyclerView.setAdapter(mCustomAdapter);
+    private CustomAdapter initAdapter(List<Object> list,RecyclerView recyclerView) {
+        CustomAdapter adapter = new CustomAdapter(list);
+        adapter.setAdapterChangeListener(this);
+        adapter.setOnRecyItemClickListener(this);
+        recyclerView.setAdapter(adapter);
+        return adapter;
     }
 
     @Override
@@ -157,23 +179,41 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                         CommonConst.ACTIVITY_SELECT_TYPE_KEY, REQUES_SEARCH_ACTIVITY_END_STATION_CODE);
                 break;
             case R.id.collect:
-                RecognizerObserver.getInstance(this).showRecognizeDialog(this,new NameCallBack() {
-                    @Override
-                    public void nameComplete(String name) {
-                        updateCollectState(name);
-                    }
-
-                    @Override
-                    public void startRecoginze() {
-
-                    }
-                });
+                updateCollectClick();
                 break;
-            case R.id.select_city:
-               // StartActivityUtils.startActivity(this,SearchActivity.class, REQUES_SEARCH_ACTIVITY_CITY_CODE,
-               //         CommonConst.ACTIVITY_SELECT_TYPE_KEY, REQUES_SEARCH_ACTIVITY_CITY_CODE);
+            case R.id.favrite_btn:
+                if(mFavoriteRecyler.getVisibility() == View.GONE) {
+                    new Thread(this).start();
+                }else{
+                    updateRecycleVisible(false);
+                }
                 break;
         }
+    }
+
+    private void updateCollectClick() {
+        if(mFavoriteInfo.getCurrentCollectInfo() == null){
+            RecognizerObserver.getInstance(this).showRecognizeDialog(this,new NameCallBack() {
+                @Override
+                public void nameComplete(String name) {
+                    updateCollectState(new CollectInfo(name,mCustomAdapter.getList()));
+                }
+
+                @Override
+                public void startRecoginze() {
+
+                }
+            });
+        }else{
+            removeCollectInfo(mFavoriteInfo.getCurrentCollectInfo());
+        }
+    }
+
+    public void removeCollectInfo(CollectInfo collectInfo){
+        mFavoriteCustomAdapter.removeData(collectInfo);
+        FavoriteManager.removeCollect(this,collectInfo.getName());
+        mFavoriteInfo.removeFavorite(collectInfo);
+        mFavoriteInfo.setCurrentCollectInfo(null);
     }
 
     private void updateStartBtnState(){
@@ -220,6 +260,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     }else {
                         if (mTargetStation != null) {
                             //targetStationView.setText(mTargetStation.getKey());
+                            updateRecycleVisible(false);
                             int count = mCustomAdapter.getItemCount();
                             for(int i = 0;i < count; i++){
                                 SelectResultInfo selectResultInfo = (SelectResultInfo) mCustomAdapter.getList().get(i);
@@ -239,6 +280,43 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
         }
         Log.d(TAG,"onActivityResult result = "+result);
+    }
+
+    private void updateRecycleVisible(boolean favoriteVisiable){
+        if(mFavoriteInfo != null) {
+            mFavoriteInfo.setCurrentCollectInfo(null);
+        }
+        if(favoriteVisiable) {
+            mFavoriteRecyler.setVisibility(View.VISIBLE);
+            mTargetRecyclerView.setVisibility(View.GONE);
+            if(mFavoriteCustomAdapter.getItemCount() > 0){
+                selectTargetHint.setText(getString(R.string.select_target_list));
+            }else{
+                selectTargetHint.setText("");
+            }
+        }else{
+            mFavoriteRecyler.setVisibility(View.GONE);
+            mTargetRecyclerView.setVisibility(View.VISIBLE);
+            updateTargetNumberHint(mCustomAdapter.getItemCount());
+        }
+        updateCollectBtnVisiable();
+    }
+
+    private void updateCollectBtnVisiable(){
+        if(mTargetRecyclerView.getVisibility() == View.VISIBLE && mCustomAdapter.getItemCount() > 0){
+            collect.setVisibility(View.VISIBLE);
+        }else{
+            collect.setVisibility(View.GONE);
+        }
+        updateCollectDrawable();
+    }
+
+    private void updateCollectDrawable(){
+        if(mFavoriteInfo.getCurrentCollectInfo() != null) {
+            collect.setBackgroundResource(R.drawable.ic_collected);
+        }else{
+            collect.setBackgroundResource(R.drawable.ic_collect);
+        }
     }
 
     @Override
@@ -354,20 +432,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onItemClick(View view, int position) {
-
+        if(mFavoriteRecyler.getVisibility() == View.VISIBLE){
+            Object object = mFavoriteCustomAdapter.getDataIndex(position);
+            if(object instanceof CollectInfo){
+                CollectInfo collectInfo = (CollectInfo) object;
+                List<Object> list = new ArrayList<>();
+                for(SelectResultInfo selectResultInfo : collectInfo.getList()){
+                    list.add(selectResultInfo);
+                }
+                mCustomAdapter.setData(list);
+            }
+            updateRecycleVisible(true);
+        }
     }
 
     @Override
     public void onItemDelete(View view, int position) {
-        Object object = mCustomAdapter.getList().get(position);
-        if(object instanceof SelectResultInfo){
-            removeRemindList((SelectResultInfo) object);
-            if(mRemonderLocationService != null) {
-                mRemonderLocationService.removetReminder((SelectResultInfo) object);
+        if(mTargetRecyclerView.getVisibility() == View.VISIBLE) {
+            Object object = mCustomAdapter.getList().get(position);
+            if (object instanceof SelectResultInfo) {
+                removeRemindList((SelectResultInfo) object);
+                if (mRemonderLocationService != null) {
+                    mRemonderLocationService.removetReminder((SelectResultInfo) object);
+                }
             }
-        }
-        if(mCustomAdapter.getItemCount() <= 0){
-            updateStartBtnState();
+            if (mCustomAdapter.getItemCount() <= 0) {
+                updateStartBtnState();
+            }
+        }else if(mFavoriteRecyler.getVisibility() == View.VISIBLE) {
+            mFavoriteCustomAdapter.removeData(position);
+            removeCollectInfo((CollectInfo) mFavoriteCustomAdapter.getDataIndex(position));
         }
     }
 
@@ -387,22 +481,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         if(number > 0) {
             selectTargetHint.setGravity(ViewGroup.TEXT_ALIGNMENT_TEXT_START);
             selectTargetHint.setText(String.format(getString(R.string.select_target_numbuer),number));
-            collect.setVisibility(View.VISIBLE);
         }else{
             selectTargetHint.setText("");
             selectTargetHint.setGravity(ViewGroup.TEXT_ALIGNMENT_CENTER);
-            collect.setVisibility(View.GONE);
         }
     }
 
-    private void updateCollectState(String name){
-        boolean isCollected = FavoriteManager.saveShareList(this,name,mCustomAdapter.getList());
-        if(isCollected) {
-            collect.setBackgroundResource(R.drawable.ic_collected);
-        }else{
-            collect.setBackgroundResource(R.drawable.ic_collect);
-        }
+    private void updateCollectState(CollectInfo collectInfo){
+        FavoriteManager.saveShareList(this,collectInfo);
         getFavoriteList();
+        if(mFavoriteInfo != null) {
+            mFavoriteInfo.setCurrentCollectInfo(collectInfo);
+        }
+        updateCollectDrawable();
     }
 
     @Override

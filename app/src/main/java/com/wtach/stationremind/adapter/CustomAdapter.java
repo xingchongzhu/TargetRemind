@@ -40,12 +40,27 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
         return list;
     }
 
+    public Object getDataIndex(int position) {
+        if(list == null || list.size() < position){
+            return null;
+        }
+        return list.get(position);
+    }
+
     public void setData(List<Object> list){
         if(this.list != null){
             this.list.clear();
         }
         this.list = list;
         notifyDataSetChanged();
+        notifyCountChange();
+    }
+
+    public void removeIndex(int index){
+        if(this.list != null){
+            this.list.remove(index);
+            notifyDataSetChanged();
+        }
         notifyCountChange();
     }
 
@@ -111,7 +126,7 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
                 return new SelectResultViewHolder(view);
             case CollectionInfoItemViewType:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.collection_item_layout, parent, false);
-                return new SelectResultViewHolder(view);
+                return new CollectionViewHolder(view);
                 default:
         }
         return null;
@@ -138,7 +153,8 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             }
         }else if(viewHolder instanceof CollectionViewHolder){
             CollectInfo collectInfo = (CollectInfo)list.get(position);
-            ((CollectionViewHolder) viewHolder).textView.setText(collectInfo.getName());
+            ((CollectionViewHolder) viewHolder).titleView.setText(collectInfo.getName());
+            ((CollectionViewHolder) viewHolder).textView.setText(collectInfo.getContent());
             if(mOnRecyItemClickListener != null){
                 final View delete =  ((CollectionViewHolder) viewHolder).delete;
                 delete.setOnClickListener(new View.OnClickListener() {
@@ -204,12 +220,14 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
     }
 
     static class CollectionViewHolder extends RecyclerView.ViewHolder {
+        TextView titleView;
         TextView textView;
         View delete;
 
         public CollectionViewHolder(View view) {
             super(view);
-            textView = (TextView) view.findViewById(R.id.text);
+            titleView = (TextView) view.findViewById(R.id.title);
+            textView = (TextView) view.findViewById(R.id.text_content);
             delete = view.findViewById(R.id.delete);
         }
     }

@@ -41,21 +41,16 @@
 
     <View
         android:id="@+id/collect"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="5dp"
         android:background="@drawable/ic_collect"
         android:layout_gravity="center_vertical"
         app:layout_goneMarginRight="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/select_city"
-        android:drawableLeft="@drawable/ic_location"
         android:gravity="center_vertical"
-        android:hint="@string/current_location"
-        android:textColor="@color/blue"
-        android:drawablePadding="5dp"
-        android:singleLine="true"
-        android:textSize="@dimen/textvie_item_text_size"
         android:visibility="gone"
         tools:ignore="MissingConstraints">
 

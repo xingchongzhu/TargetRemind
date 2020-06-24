@@ -18,7 +18,15 @@
         android:textSize="@dimen/textvie_item_text_size" />
 
     <com.heytap.wearable.support.recycler.widget.RecyclerView
-        android:id="@+id/recyler"
+        android:id="@+id/favorite_recyler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:fadeScrollbars="true"
+        android:scrollbars="vertical" />
+
+    <com.heytap.wearable.support.recycler.widget.RecyclerView
+        android:id="@+id/target_recyler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"

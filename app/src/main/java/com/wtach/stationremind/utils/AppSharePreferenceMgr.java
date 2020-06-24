@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.wtach.stationremind.object.CollectInfo;
 import com.wtach.stationremind.object.SelectResultInfo;
 
 import java.io.ByteArrayInputStream;
@@ -182,16 +183,16 @@ public class AppSharePreferenceMgr {
         return list;
     }
 
-    public static void putSerializableList(Context context, String key, List<Object> list){
+    public static void putSerializableList(Context context, CollectInfo collectInfo){
         SharedPreferences share =  context.getSharedPreferences(FILE_NAME,
                 Context.MODE_PRIVATE);
         Gson gson = new Gson();
-        String json = gson.toJson(list);
+        String json = gson.toJson(collectInfo.getList());
         Log.d("zxc", "saved json is "+ json);
 
         SharedPreferences.Editor editor = share.edit();
         // 将编码后的字符串写到base64.xml文件中
-        editor.putString(key, json);
+        editor.putString(collectInfo.getName(), json);
         SharedPreferencesCompat.apply(editor);
     }
 

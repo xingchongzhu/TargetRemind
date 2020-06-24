@@ -33,6 +33,7 @@ import static com.baidu.aip.asrwakeup3.core.recog.IStatus.STATUS_WAITING_READY;
 
 public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
 
+    private final static String TAG = "RecognizerObserver";
     private static RecognizerObserver mRecognizerObserver;
     protected RecognizerImp mRecognizerImp;
     private List<RecognizerImp.HandleResultCallback> handleResultCallbackList = new ArrayList<>();
@@ -58,11 +59,12 @@ public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
         if(dialog != null){
             dialog.dismiss();
         }
+        Log.d(TAG,"showRecognizeDialog");
         dialog = new CommonDialog(context);
 
-        dialog.setMessage(context.getString(R.string.default_name))
+        //dialog.setMessage(context.getString(R.string.default_name))
                // .setImageResId(R.mipmap.ic_launcher)
-                .setTitle(context.getString(R.string.start_record_recognize))
+        dialog.setTitle(context.getString(R.string.start_record_recognize))
                 .setSingle(false).setOnClickBottomListener(new CommonDialog.OnClickBottomListener() {
             @Override
             public void onPositiveClick() {
@@ -77,13 +79,14 @@ public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
                 dialog.dismiss();
             }
         }).show();
+        startRecognizer();
         dialog.messageTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.messageTv.setVisibility(View.GONE);
                 startRecognizer();
             }
         });
-
     }
 
     public void addHandleResultCallback(RecognizerImp.HandleResultCallback callback) {
@@ -103,7 +106,9 @@ public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
                 if (msg.arg2 == 1) {
                     String result = msg.obj.toString().trim().replace("，", "");
                     if(dialog != null){
+                        dialog.messageTv.setVisibility(View.VISIBLE);
                         dialog.messageTv.setText(result);
+                        //startRecognizer();
                     }
                     text.append(result);
                 }
