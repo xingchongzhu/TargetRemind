@@ -6,6 +6,7 @@ import android.app.Application;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
+import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.util.Log;
@@ -29,16 +30,26 @@ import java.util.List;
  * 直接拷贝com.baidu.location.service包到自己的工程下，简单配置即可获取定位结果，也可以根据demo内容自行封装
  */
 public class LocationApplication extends Application {
+
+    public final static int DELAY_INIT_DRUATION = 500;
     public LocationService locationService;
     public Vibrator mVibrator;
     public String TAG = "LocationApplication";
 
+    private Handler handler= new Handler();
     @Override
     public void onCreate() {
         super.onCreate();
-        locationService = new LocationService(getApplicationContext());
-        mVibrator = (Vibrator) getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
+        handler.postDelayed(initRunnable,DELAY_INIT_DRUATION);
     }
+
+    Runnable initRunnable = new Runnable() {
+        @Override
+        public void run() {
+            locationService = new LocationService(getApplicationContext());
+            mVibrator = (Vibrator) getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
+        }
+    };
 
     private String getProcessName(Context context) {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);

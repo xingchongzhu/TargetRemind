@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@drawable/linerlayout_water_selector"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#000000"
     android:clickable="true"
     android:focusable="true"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text"
+    <ViewStub
+        android:id="@+id/main_layout"
+        android:layout="@layout/activity_main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/item_text_color"
-        android:textSize="@dimen/textvie_item_text_size"
-        android:padding="5dp"
-        >
-    </TextView>
-</LinearLayout>
+        android:layout_height="match_parent">
+    </ViewStub>
+    <com.wtach.stationremind.views.ScaleButton
+        android:id="@+id/start_anim_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/start_earth">
+    </com.wtach.stationremind.views.ScaleButton>
+
+    <com.wtach.stationremind.views.ScaleButton
+        android:id="@+id/empty_add_btn"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"
+        android:visibility="gone"
+        android:background="@drawable/ic_add_selector">
+    </com.wtach.stationremind.views.ScaleButton>
+</RelativeLayout>

@@ -8,11 +8,10 @@
         android:id="@+id/select_target_hint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center"
         android:gravity="center"
-        android:hint="@string/add_target_station_hint"
+        android:hint="@string/favorite_list_empty_hint"
         android:singleLine="true"
-        android:drawablePadding="5dp"
         android:paddingLeft="5dp"
         android:textColor="@color/text_view_color"
         android:textSize="@dimen/textvie_item_text_size" />

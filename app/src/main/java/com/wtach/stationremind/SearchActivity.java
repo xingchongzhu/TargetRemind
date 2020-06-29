@@ -3,6 +3,7 @@ package com.wtach.stationremind;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
@@ -50,37 +51,53 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     private View resultLinear;
 
     private String resultKey;
-    private CustomAdapter mCustomAdapter;
+    private CustomAdapter mCustomAdapter = new CustomAdapter(null);
     private AudioWaveView audioview;
     /**
      * 控制UI按钮的状态
      */
-    protected int status;
+    protected int  status = STATUS_NONE;
 
     //Sug检索
     private SuggestionSearch mSuggestionSearch;
 
     private Object mSuggestionInfo;
 
+    private Handler mHandler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //getWindow().requestFeature(Window.FEATURE_SWIPE_TO_DISMISS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_layout);
-        init();
         RecognizerObserver.getInstance(this).addHandleResultCallback(this);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+               initView();
+            }
+        },300);
+
+        mHandler.postDelayed(initRunnable,800);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                initData();
+            }
+        }).start();
+        //mHandler.postDelayed(initRunnable,1000);
     }
 
+    Runnable initRunnable = new Runnable() {
+        @Override
+        public void run() {
+            init();
+        }
+    };
+
     private void init() {
-        status = STATUS_NONE;
-        //mRecognizerImp = new RecognizerImp(this, this);
         SDKInitializer.initialize(getApplicationContext());
         mSuggestionSearch = SuggestionSearch.newInstance();
         mSuggestionSearch.setOnGetSuggestionResultListener(listener);
-
-        initView();
-        initTitleBar();
-        initData();
     }
 
     private void initView() {
@@ -111,6 +128,8 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         audioview.setVisibility(View.GONE);
         setVoiceIconDrawable(R.drawable.ic_voice_icon);
         audioview.startAnimation();
+        initTitleBar();
+        initAdapter(null);
     }
 
     @Override
@@ -153,11 +172,17 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 list = Utils.getHistoryTargets(this);
                 break;
         }
-        initAdapter(list);
+        final List templist = list;
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mCustomAdapter.setData(templist);
+            }
+        });
+
     }
 
     private void initAdapter(List<Object> list) {
-        mCustomAdapter = new CustomAdapter(list);
         mCustomAdapter.setOnRecyItemClickListener(this);
         mRecyclerView.setAdapter(mCustomAdapter);
     }
@@ -360,7 +385,10 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     protected void release(){
-        mSuggestionSearch.destroy();
+        mHandler.removeCallbacks(initRunnable);
+        if(mSuggestionSearch != null) {
+            mSuggestionSearch.destroy();
+        }
     }
 
     @Override

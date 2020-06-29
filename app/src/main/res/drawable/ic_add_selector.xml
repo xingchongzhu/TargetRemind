@@ -12,7 +12,6 @@
         android:drawable="@drawable/ic_add_target_press"
         android:state_focused="true" />
 
-       
     <item android:drawable="@drawable/ic_add_target" />
 
 </selector>

@@ -13,6 +13,7 @@
         android:textColor="@color/item_text_color"
         android:textSize="@dimen/textvie_item_text_size"
         android:padding="5dp"
+
         >
     </TextView>
 </LinearLayout>

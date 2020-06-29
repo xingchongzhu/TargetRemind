@@ -10,6 +10,7 @@ import com.heytap.wearable.support.recycler.widget.RecyclerView;
 import com.wtach.stationremind.R;
 import com.wtach.stationremind.listener.OnRecyItemClickListener;
 import com.wtach.stationremind.model.item.bean.CityInfo;
+import com.wtach.stationremind.model.item.bean.CollectNameInfo;
 import com.wtach.stationremind.model.item.bean.StationInfo;
 import com.wtach.stationremind.object.CollectInfo;
 import com.wtach.stationremind.object.SelectResultInfo;
@@ -24,6 +25,8 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
     public static final int SugInfoItemViewType = 3;
     public static final int SelectResultInfoItemViewType = 4;
     public static final int CollectionInfoItemViewType = 5;
+    public static final int NAMEFAVORITEITEMVIEWTYPE = 6;
+
     private List<Object> list;
 
     private OnRecyItemClickListener mOnRecyItemClickListener;
@@ -103,6 +106,8 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             return SelectResultInfoItemViewType;
         }else if (list.get(i) instanceof CollectInfo){
             return CollectionInfoItemViewType;
+        }else if (list.get(i) instanceof CollectNameInfo){
+            return NAMEFAVORITEITEMVIEWTYPE;
         }else{
              return -1;
         }
@@ -127,6 +132,9 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
             case CollectionInfoItemViewType:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.collection_item_layout, parent, false);
                 return new CollectionViewHolder(view);
+            case NAMEFAVORITEITEMVIEWTYPE:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.dialog_item_layout, parent, false);
+                return new CollectNameViewHolder(view);
                 default:
         }
         return null;
@@ -164,6 +172,8 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
                     }
                 });
             }
+        }else if(viewHolder instanceof CollectNameViewHolder){
+            ((CollectNameViewHolder) viewHolder).textView.setText(((CollectNameInfo)list.get(position)).getName());
         }
         if(mOnRecyItemClickListener != null){
             final View itemView =  viewHolder.itemView;
@@ -232,6 +242,14 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
         }
     }
 
+    static class CollectNameViewHolder extends RecyclerView.ViewHolder {
+        TextView textView;
+
+        public CollectNameViewHolder(View view) {
+            super(view);
+            textView = (TextView) view.findViewById(R.id.text);
+        }
+    }
     public interface AdapterChangeListener{
         void notifyChange(int num);
     }

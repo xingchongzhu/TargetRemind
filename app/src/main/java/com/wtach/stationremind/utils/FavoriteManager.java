@@ -42,7 +42,7 @@ public class FavoriteManager {
     public static void removeCollect(Context context,String collectName){
         String string = (String) AppSharePreferenceMgr.get(context,IDef.FAVORITE_LIST_NAME_KEY,"");
         String[] splits = null;
-        StringBuilder stringBuilder = new StringBuilder(string);
+        StringBuilder stringBuilder = new StringBuilder();
         if (!TextUtils.isEmpty(string)) {
             splits = string.split(IDef.TARGET_LIST_SPLIT);
             for(String str : splits){

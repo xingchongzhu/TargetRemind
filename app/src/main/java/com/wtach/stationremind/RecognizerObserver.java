@@ -34,6 +34,7 @@ import static com.baidu.aip.asrwakeup3.core.recog.IStatus.STATUS_WAITING_READY;
 public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
 
     private final static String TAG = "RecognizerObserver";
+    private final static String NO_SPEECH = "VAD detect no speech";
     private static RecognizerObserver mRecognizerObserver;
     protected RecognizerImp mRecognizerImp;
     private List<RecognizerImp.HandleResultCallback> handleResultCallbackList = new ArrayList<>();
@@ -55,7 +56,7 @@ public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
         return mRecognizerObserver;
     }
 
-    protected void showRecognizeDialog(Context context, final BaseActivity.NameCallBack nameCallBack) {
+    public void showRecognizeDialog(final Context context, final BaseActivity.NameCallBack nameCallBack) {
         if(dialog != null){
             dialog.dismiss();
         }
@@ -68,8 +69,8 @@ public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
                 .setSingle(false).setOnClickBottomListener(new CommonDialog.OnClickBottomListener() {
             @Override
             public void onPositiveClick() {
-                dialog.dismiss();
-                if(nameCallBack != null){
+                if(nameCallBack != null && checkRecognizeContentValid(context,text.toString())){
+                    dialog.dismiss();
                     nameCallBack.nameComplete(text.toString());
                 }
             }
@@ -89,6 +90,18 @@ public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
         });
     }
 
+    private boolean checkRecognizeContentValid(Context context, String string){
+        if (NO_SPEECH.equals(string)) {
+            Toast.makeText(context,context.getString(R.string.no_recognize_speech),Toast.LENGTH_LONG).show();
+            return false;
+        }
+        if (TextUtils.isEmpty(string)) {
+            Toast.makeText(context,context.getString(R.string.name_same_empty_hint),Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
+
     public void addHandleResultCallback(RecognizerImp.HandleResultCallback callback) {
         if(!handleResultCallbackList.contains(callback)){
             handleResultCallbackList.add(callback);
@@ -105,10 +118,14 @@ public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
             case STATUS_FINISHED:
                 if (msg.arg2 == 1) {
                     String result = msg.obj.toString().trim().replace("，", "");
-                    if(dialog != null){
+                    if(dialog != null ){
                         dialog.messageTv.setVisibility(View.VISIBLE);
-                        dialog.messageTv.setText(result);
-                        //startRecognizer();
+                        if(NO_SPEECH.equals(result)){
+                            //startRecognizer();
+                            dialog.messageTv.setHint("点击语音识别");
+                        }else {
+                            dialog.messageTv.setText(result);
+                        }
                     }
                     text.append(result);
                 }

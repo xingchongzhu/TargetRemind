@@ -8,6 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
     <style name="AppTheme" parent="@style/HeytapTheme">
+        <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@drawable/spash_screen</item>
         <!-- Customize your theme here. --> .... </style>
 
     <style name="display_time">
@@ -43,4 +45,5 @@
         <!--是否模糊-->
         <item name="android:backgroundDimEnabled">true</item>
     </style>
+
 </resources>

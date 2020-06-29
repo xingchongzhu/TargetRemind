@@ -16,6 +16,7 @@ import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
@@ -52,6 +53,7 @@ public abstract class BaseActivity extends Activity implements RecognizerImp.Han
 
     private HeyDialog netWorkDialog;
 
+    private Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +94,8 @@ public abstract class BaseActivity extends Activity implements RecognizerImp.Han
             checkoutGpsAndNetWork();
         }
     }
+
+
 
     protected boolean checkoutGpsAndNetWork(){
         if (!NetWorkUtils.isGPSEnabled(this) || (!NetWorkUtils.isMobileConnected(this) && !NetWorkUtils.isNetworkConnected(this))) {

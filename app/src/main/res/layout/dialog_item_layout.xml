@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@drawable/linerlayout_water_selector"
+    android:background="@drawable/dialog_linerlayout_water_selector"
     android:clickable="true"
     android:focusable="true"
     android:layout_width="match_parent"

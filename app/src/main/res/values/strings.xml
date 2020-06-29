@@ -40,13 +40,17 @@
     <string name="start_remind_fail" translatable="false">开启失败，请检查网络或gps是否可用</string>
     <string name="max_target_count_hint" translatable="false">不能添加更多提醒位置</string>
 
-    <string name="add_target_station_hint" translatable="false">+添加目标位置，目录查看收藏列表</string>
-    <string name="select_target_numbuer" translatable="false">已添加提醒目 %d 个</string>
+    <string name="favorite_list_empty_hint" translatable="false">收藏列表为空</string>
+    <string name="select_target_numbuer" translatable="false">待提醒位置 %d 个</string>
     <string name="name_same_hnit" translatable="false">重复命名</string>
     <string name="name_same_empty_hint" translatable="false">命名不能为空</string>
+    <string name="no_recognize_speech" translatable="false">没有语音输入</string>
     <string name="name_favorite_title" translatable="false">命名</string>
     <string name="default_name" translatable="false">点击命名</string>
     <string name="cancle" translatable="false">取消</string>
-    <string name="select_target_list" translatable="false">选择收藏目标</string>
+    <string name="favorite_list_title" translatable="false">收藏列表</string>
+    <string name="add_target_hint" translatable="false">点击添加位置提醒</string>
+    <string name="collect_name_title" translatable="false">收藏夹命名</string>
+    <string name="new_collect_nema" translatable="false">新建命名</string>
 </resources>
 
