@@ -24,13 +24,14 @@ import android.view.animation.DecelerateInterpolator;
 import com.wtach.stationremind.Interpolator.DancingInterpolator;
 import com.wtach.stationremind.R;
 import com.wtach.stationremind.utils.DisplayUtils;
+import com.wtach.stationremind.utils.ImageUtils;
 
 import static android.animation.ValueAnimator.INFINITE;
 
 public class DancingView extends View{
 
     public static final int DEFAULT_POINT_RADIUS = 10;
-    public static final int DEFAULT_BALL_RADIUS = 13;
+    public static final int DEFAULT_BALL_RADIUS = 18;
     public static final int DEFAULT_LINE_HEIGHT = 2;
     public static final int DEFAULT_LINE_COLOR = Color.parseColor("#de4848");
     public static final int DEFAULT_FREEDOWN_DURATION = 1000;//ms
@@ -46,6 +47,10 @@ public class DancingView extends View{
 
     private ValueAnimator mFreeDownController;//自由落体控制器
     private WaterRippleView waterRippleView;
+    private Bitmap bonuceIccn;
+    private float centerX = 0;
+    private float centerY = 0;
+
     public DancingView(Context context) {
         super(context);
         init(context, null);
@@ -61,7 +66,6 @@ public class DancingView extends View{
         init(context, attrs);
     }
 
-
     private void init(Context context, AttributeSet attrs) {
         initAttributes(context, attrs);
         mPaint = new Paint();
@@ -73,6 +77,8 @@ public class DancingView extends View{
         waterRippleView.setFillAllView(true);
         mPaint.setColor(mBallColor);
         setRotationX(30);
+        bonuceIccn = ImageUtils.drawableToBitamp(getContext().getDrawable(R.drawable.ic_bounce_location));
+        bonuceIccn = Bitmap.createScaledBitmap(bonuceIccn, DEFAULT_BALL_RADIUS*2, DEFAULT_BALL_RADIUS*2, true);
     }
 
     private void initAttributes(Context context, AttributeSet attrs) {
@@ -86,6 +92,7 @@ public class DancingView extends View{
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         waterRippleView.onLayout(changed, left, top, right, bottom,getWidth(),getHeight());
+        centerX = getWidth() / 2 - bonuceIccn.getWidth()/2;
     }
 
     private void initController() {
@@ -123,10 +130,11 @@ public class DancingView extends View{
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         // 一条绳子用左右两部分的二阶贝塞尔曲线组成
-        float cy = getHeight() / 2 - freeBallDistance - BALL_RADIUS*2;
+        centerY = getHeight() / 2 - freeBallDistance - BALL_RADIUS*2;
         if(mFreeDownController != null && mFreeDownController.isRunning()){
             waterRippleView.onDraw(canvas);
-            canvas.drawCircle(getWidth() / 2, cy, BALL_RADIUS, mPaint);
+            canvas.drawBitmap(bonuceIccn,centerX, centerY,mPaint);
+            //canvas.drawCircle(getWidth() / 2, cy, BALL_RADIUS, mPaint);
         }
     }
 }
