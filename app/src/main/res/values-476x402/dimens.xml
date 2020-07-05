@@ -13,7 +13,7 @@
     <dimen name="notif_text_pad">5dp</dimen>
     <dimen name="margin_gap">3dp</dimen>
 
-    <dimen name="big_font_size">16sp</dimen>
+    <dimen name="big_font_size">14sp</dimen>
     <dimen name="alarm_lockscreen_pulse_radius">60dp</dimen>
     <dimen name="alarm_lockscreen_alarm_horizontal_padding">16dp</dimen>
     <dimen name="alarm_lockscreen_alarm_vertical_padding">48dp</dimen>

@@ -29,8 +29,10 @@
         android:layout_gravity="fill_horizontal"
         android:gravity="center"
         android:includeFontPadding="false"
+        android:layout_marginTop="10dp"
         android:padding="10dp"
         android:singleLine="true"
+        android:textColor="@color/blue"
         android:textSize="@dimen/big_font_size" />
 
     <com.wtach.stationremind.views.CircleView

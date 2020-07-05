@@ -196,7 +196,7 @@ public class AlarmActivity extends AlarmBaseActivity
         //VibratorUtil.Vibrate(this,vibrator);
         Intent intent = getIntent();
         mTimerKlaxon = new TimerKlaxon(this);
-        mTimerKlaxon.start(this, intent.getBooleanExtra("arrive", true));
+        //mTimerKlaxon.start(this, intent.getBooleanExtra("arrive", true));
         titleTextView.setText(intent.getStringExtra("title"));
         hintText = intent.getBooleanExtra("arrive", true)?getResources().getString(R.string.alarm_alert_off_text):
                 getResources().getString(R.string.alarm_alert_snoozed_text);
