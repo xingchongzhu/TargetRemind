@@ -312,9 +312,13 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         Intent intent = new Intent();
         SelectResultInfo selectResultInfo = null;
         if(mSuggestionInfo instanceof SuggestionResult.SuggestionInfo){
-            SuggestionResult.SuggestionInfo tempSuggestionInfo = (SuggestionResult.SuggestionInfo) mSuggestionInfo;
-            selectResultInfo = new SelectResultInfo(tempSuggestionInfo.key,tempSuggestionInfo.city,tempSuggestionInfo.district,
-                    tempSuggestionInfo.pt.latitude,tempSuggestionInfo.pt.longitude,tempSuggestionInfo.uid,tempSuggestionInfo.address);
+            try {
+                SuggestionResult.SuggestionInfo tempSuggestionInfo = (SuggestionResult.SuggestionInfo) mSuggestionInfo;
+                selectResultInfo = new SelectResultInfo(tempSuggestionInfo.key, tempSuggestionInfo.city, tempSuggestionInfo.district,
+                        tempSuggestionInfo.pt.latitude, tempSuggestionInfo.pt.longitude, tempSuggestionInfo.uid, tempSuggestionInfo.address);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }else if(mSuggestionInfo instanceof SelectResultInfo){
             selectResultInfo = (SelectResultInfo) mSuggestionInfo;
         }

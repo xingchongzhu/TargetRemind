@@ -99,7 +99,11 @@ public class RecognizerImp {
 
         // 这里打印出params， 填写至您自己的app中，直接调用下面这行代码即可。
         // DEMO集成步骤2.2 开始识别
-        myRecognizer.start(params);
+        try{
+            myRecognizer.start(params);
+        }catch (RuntimeException e){
+            initRecognize();
+        }
     }
 
     /**
@@ -108,8 +112,10 @@ public class RecognizerImp {
      * 基于DEMO集成4.1 发送停止事件 停止录音
      */
     public void stop() {
-
-        myRecognizer.stop();
+        try{
+            myRecognizer.stop();
+        }catch (RuntimeException e){
+        }
     }
 
     /**
@@ -118,12 +124,17 @@ public class RecognizerImp {
      * 基于DEMO集成4.2 发送取消事件 取消本次识别
      */
     public void cancel() {
-
-        myRecognizer.cancel();
+        try{
+            myRecognizer.cancel();
+        }catch (RuntimeException e){
+        }
     }
 
     public void release() {
-        myRecognizer.release();
+        try{
+            myRecognizer.release();
+        }catch (RuntimeException e){
+        }
     }
 
     protected Map<String, Object> fetchParams() {

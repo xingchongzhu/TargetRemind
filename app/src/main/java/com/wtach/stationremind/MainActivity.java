@@ -88,6 +88,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private AnimUtil mAnimUtil = new AnimUtil();
     private View emptyAddBtn;
     private View bottomView;
+    private View favriteListBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +149,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         targetStationView.setOnClickListener(this);
         selectCity.setOnClickListener(this);
         collect.setOnClickListener(this);
-        findViewById(R.id.favrite_btn).setOnClickListener(this);
+        favriteListBtn = findViewById(R.id.favrite_btn);
+        favriteListBtn.setOnClickListener(this);
 
         startRemindBtn.setEnabled(false);
         startRemindBtn.setClickable(false);
@@ -278,6 +280,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private void saveFavorite(CollectInfo collectInfo){
         FavoriteManager.saveShareList(this,collectInfo);
         getFavoriteList();
+        final List list = mFavoriteInfo != null ? mFavoriteInfo.favoriteMap : null;
+        mFavoriteCustomAdapter.setData(list);
     }
 
     public void removeCollectInfo(CollectInfo collectInfo){
@@ -294,15 +298,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             if (!mRemonderLocationService.isReminder() && mCustomAdapter.getItemCount() > 0) {
                 mRemonderLocationService.setStartReminder();
                 //startRemindBtn.setText(R.string.stop_remind);
+                if (mRemonderLocationService != null) {
+                    mRemonderLocationService.addReminderList(mCustomAdapter.getList());
+                }
                 startRemindBtn.setBackgroundResource(R.drawable.ic_pause);
                 dancingView.startAnimation();
                 serachLayoutManagerRoot.setVisibility(View.GONE);
+                targetStationView.setVisibility(View.GONE);
+                favriteListBtn.setVisibility(View.GONE);
             } else {
                 dancingView.stopAnimation();
                 mRemonderLocationService.setCancleReminder();
                 startRemindBtn.setBackgroundResource(R.drawable.ic_start);
                 //startRemindBtn.setText(R.string.start_remind);
                 serachLayoutManagerRoot.setVisibility(View.VISIBLE);
+                targetStationView.setVisibility(View.VISIBLE);
+                favriteListBtn.setVisibility(View.VISIBLE);
             }
         }else{
             Log.e(TAG,"updateStartBtnState not bind mRemonderLocationService");
@@ -311,7 +322,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private boolean collectIsVisible(){
-        if(mTargetRecyclerView != null && mTargetRecyclerView.getVisibility() == View.VISIBLE && mCustomAdapter.getItemCount() > 0 ){
+        if(mTargetRecyclerView != null && mTargetRecyclerView.getVisibility() == View.VISIBLE && mCustomAdapter.getItemCount() > 0 &&
+                !mRemonderLocationService.isReminder()){
             return true;
         }
         return false;
@@ -351,9 +363,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                             mCustomAdapter.addData(mTargetStation);
                             startRemindBtn.setEnabled(true);
                             startRemindBtn.setClickable(true);
-                            if (mRemonderLocationService != null) {
-                                mRemonderLocationService.addReminder((SelectResultInfo) mTargetStation);
-                            }
                             updateRecycleVisible(false);
                         }
                     }

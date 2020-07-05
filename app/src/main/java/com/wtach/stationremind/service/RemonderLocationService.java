@@ -62,7 +62,7 @@ public class RemonderLocationService extends Service {
     //public LocationClient mLocationClient = null;
     public BDNotifyListener myListener = new MyNotifyListener();
 
-    private List<SelectResultInfo> LoacationList = new ArrayList<>();
+    private List<Object> LoacationList = new ArrayList<>();
 
     public IBinder onBind(Intent intent) {
         return updateBinder;
@@ -140,7 +140,8 @@ public class RemonderLocationService extends Service {
                     mLocationChangerListener.loactionStation(location);
                 }
                 if (isReminder) {
-                    for(SelectResultInfo selectResultInfo : LoacationList){
+                    for(Object ojbect : LoacationList){
+                        SelectResultInfo selectResultInfo = (SelectResultInfo) ojbect;
                         double longitude = selectResultInfo.getLongitude();
                         double latitude = selectResultInfo.getLatitude();
                         double dis = CommonFuction.getDistanceLat(longitude, latitude, location.getLongitude(), location.getLatitude());
@@ -171,6 +172,10 @@ public class RemonderLocationService extends Service {
             //mLocationClient.start();
         }
         isReminder = true;
+    }
+
+    public void addReminderList(List targetStation){
+        LoacationList = targetStation;
     }
 
     public void addReminder(SelectResultInfo targetStation){

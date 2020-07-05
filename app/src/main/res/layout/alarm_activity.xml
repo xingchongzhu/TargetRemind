@@ -13,105 +13,111 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:layoutDirection="ltr">
-
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
     <TextView
         android:id="@+id/title"
         style="@style/display_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="fill_horizontal"
+        android:layout_marginTop="5dp"
         android:gravity="center"
         android:includeFontPadding="false"
-        android:layout_marginTop="10dp"
+        android:maxLines="2"
         android:padding="10dp"
-        android:singleLine="true"
         android:textColor="@color/blue"
         android:textSize="@dimen/big_font_size" />
 
-    <com.wtach.stationremind.views.CircleView
-        android:id="@+id/pulse"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="fill"
-        android:gravity="center"
-        android:layerType="hardware"
-        app:fillColor="@android:color/white"
-        app:radius="@dimen/alarm_lockscreen_pulse_radius" />
-
-    <LinearLayout
-        android:id="@+id/content"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        android:orientation="horizontal">
+        android:fitsSystemWindows="true"
+        android:layoutDirection="ltr">
 
-        <ImageView
-            android:id="@+id/snooze"
-            android:layout_width="@dimen/dimiss_icon_size"
-            android:layout_height="@dimen/dimiss_icon_size"
-            android:layout_gravity="center"
-            android:background="@drawable/bg_circle_white"
-            android:contentDescription="sleep"
-            android:src="@drawable/ic_snooze" />
-
-        <ImageView
-            android:id="@+id/alarm"
+        <com.wtach.stationremind.views.CircleView
+            android:id="@+id/pulse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:paddingLeft="@dimen/alarm_lockscreen_alarm_horizontal_padding"
-            android:paddingTop="@dimen/alarm_lockscreen_alarm_vertical_padding"
-            android:paddingRight="@dimen/alarm_lockscreen_alarm_horizontal_padding"
-            android:paddingBottom="@dimen/alarm_lockscreen_alarm_vertical_padding"
-            android:src="@drawable/ic_fab_alarm" />
+            android:layout_gravity="fill"
+            android:gravity="center"
+            android:layerType="hardware"
+            app:fillColor="@android:color/white"
+            app:radius="@dimen/alarm_lockscreen_pulse_radius" />
 
-        <ImageView
-            android:id="@+id/dismiss"
-            android:layout_width="@dimen/dimiss_icon_size"
-            android:layout_height="@dimen/dimiss_icon_size"
-            android:layout_gravity="center"
-            android:background="@drawable/bg_circle_white"
-            android:src="@drawable/ic_dismiss" />
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/snooze"
+                android:layout_width="@dimen/dimiss_icon_size"
+                android:layout_height="@dimen/dimiss_icon_size"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_circle_white"
+                android:contentDescription="sleep"
+                android:src="@drawable/ic_snooze" />
 
-    <LinearLayout
-        android:id="@+id/alert"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
+            <ImageView
+                android:id="@+id/alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:paddingLeft="@dimen/alarm_lockscreen_alarm_horizontal_padding"
+                android:paddingTop="@dimen/alarm_lockscreen_alarm_vertical_padding"
+                android:paddingRight="@dimen/alarm_lockscreen_alarm_horizontal_padding"
+                android:paddingBottom="@dimen/alarm_lockscreen_alarm_vertical_padding"
+                android:src="@drawable/ic_fab_alarm" />
 
-        <TextView
-            android:id="@+id/alert_title"
+            <ImageView
+                android:id="@+id/dismiss"
+                android:layout_width="@dimen/dimiss_icon_size"
+                android:layout_height="@dimen/dimiss_icon_size"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_circle_white"
+                android:src="@drawable/ic_dismiss" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/alert"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textAppearance="@style/alarm_lockscreen_thin"
-            android:textColor="@android:color/white"
-            android:textSize="14dp" />
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <TextView
-            android:id="@+id/alert_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textAppearance="@style/alarm_lockscreen_thin"
-            android:textColor="@android:color/white"
-            android:textSize="14dp"
-            android:textStyle="bold"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/alert_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textAppearance="@style/alarm_lockscreen_thin"
+                android:textColor="@android:color/white"
+                android:textSize="14dp" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/alert_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textAppearance="@style/alarm_lockscreen_thin"
+                android:textColor="@android:color/white"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
-</FrameLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+</LinearLayout>
