@@ -41,10 +41,12 @@ public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
 
     final StringBuffer text = new StringBuffer();
     private CommonDialog dialog;
-    private String recoginzeing = "";
+    private String recoginzeing = "正在识别";
     private RecognizerObserver(Context context){
-        recoginzeing = context.getString(R.string.stop_recognizeing);
-        mRecognizerImp = new RecognizerImp(context, this);
+        if(context != null) {
+            recoginzeing = context.getString(R.string.stop_recognizeing);
+            mRecognizerImp = new RecognizerImp(context, this);
+        }
     }
 
     public static RecognizerObserver getInstance(Context context){

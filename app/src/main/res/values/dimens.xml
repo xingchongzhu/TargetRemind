@@ -15,11 +15,11 @@
     <dimen name="title_size">18sp</dimen>
 
     <dimen name="big_font_size">14sp</dimen>
-    <dimen name="alarm_lockscreen_pulse_radius">80dp</dimen>
-    <dimen name="alarm_lockscreen_alarm_horizontal_padding">16dp</dimen>
+    <dimen name="alarm_lockscreen_pulse_radius">100dp</dimen>
+    <dimen name="alarm_lockscreen_alarm_horizontal_padding">4dp</dimen>
     <dimen name="alarm_lockscreen_alarm_vertical_padding">48dp</dimen>
     <dimen name="alarm_lockscreen_bottom_margin">25dp</dimen>
-    <dimen name="fab_alarm_size">56dp</dimen>
+    <dimen name="fab_alarm_size">64dp</dimen>
     <dimen name="bottom_text_size">16dp</dimen>
     <dimen name="alarm_info_font_size">25dp</dimen>
     <dimen name="single_color_height">60dp</dimen>
@@ -28,7 +28,7 @@
     <dimen name="textvie_item_text_size">14dp</dimen>
     <dimen name="textvie_item_content_text_size">10dp</dimen>
     <dimen name="voice_icon_size">25dp</dimen>
-    <dimen name="dimiss_icon_size">38dp</dimen>
+    <dimen name="dimiss_icon_size">45dp</dimen>
     <dimen name="radius_padding">5dp</dimen>
     <dimen name="bottom_btn_icon_size">35dp</dimen>
     <dimen name="bottom_btn_margin">10dp</dimen>
@@ -37,4 +37,5 @@
     <dimen name="main_clock_title_size">10dp</dimen>
     <dimen name="dialog_recycler_item_padding">5dp</dimen>
     <dimen name="alarm_view_circle_margin_top">20dp</dimen>
+    <dimen name="hint_title_size">14sp</dimen>
 </resources>

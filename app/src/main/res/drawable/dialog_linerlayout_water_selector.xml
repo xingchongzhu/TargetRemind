@@ -13,6 +13,6 @@
         android:state_focused="true" />
 
        
-    <item android:drawable="@color/water_ripple_color" />
+    <item android:drawable="@color/item_text_color" />
 
 </selector>

@@ -14,8 +14,11 @@
     <color name="text_Grey">#6BC1C1C2</color>
     <color name="colorblack">#000000</color>
     <color name="clock_gray">#000000</color>
-    <color name="water_ripple_color">#b1ffffff</color>
+    <color name="water_ripple_color">#de2c2c</color>
+    <color name="button_ripple_color">#ff0000</color>
     <color name="autdio_wave_color">#da099ff0</color>
     <color name="text_view_color">#EDEDED</color>
     <color name="dialog_backgournd_color">#6BC1C1C2</color>
+    <color name="alarm_color">#de2c2c</color>
+    <color name="alarm_slide_color">#099FF0</color>
 </resources>

@@ -9,7 +9,7 @@
     </style>
     <style name="AppTheme" parent="@style/HeytapTheme">
         <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@drawable/spash_screen</item>
+        <item name="android:windowBackground">@drawable/start_anim_bg</item>
         <!-- Customize your theme here. --> .... </style>
 
     <style name="display_time">

@@ -14,9 +14,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -97,6 +99,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         emptyAddBtn = findViewById(R.id.empty_add_btn);
         emptyAddBtn.setClickable(true);
         emptyAddBtn.setOnClickListener(this);
+
+        ((ViewStub)findViewById(R.id.main_layout)).inflate();
+        initView();
+
+
         mAnimUtil.setAnimation(findViewById(R.id.start_anim_view), new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -108,14 +115,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     public void onAnimationComplete() {
-
+        getWindow().getDecorView().setBackground(null);
         findViewById(R.id.start_anim_view).setVisibility(View.GONE);
-        ((ViewStub)findViewById(R.id.main_layout)).inflate();
-        initView();
         bindRemindService();
         loadHistoryTarget();
-        getWindow().getDecorView().setBackground(null);
-
     }
 
     @Override
@@ -155,12 +158,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         startRemindBtn.setEnabled(false);
         startRemindBtn.setClickable(false);
         initStatusBar();
+        dancingView.setOnCenterClickListener(this);
     }
 
     private void initStatusBar(){
         selectCity.c.setTextSize(getResources().getDimension(R.dimen.main_clock_title_size));
         selectCity.a.setImageDrawable(getDrawable(R.drawable.ic_location));
         selectCity.d.setTextColor(getColor(R.color.blue));
+
+        selectCity.d.setMarqueeRepeatLimit(Integer.MAX_VALUE);
+        selectCity.d.setFocusable(true);
+        selectCity.d.setMaxWidth(200);
+        selectCity.d.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+        selectCity.d.setFocusableInTouchMode(true);
+        selectCity.d.setHorizontallyScrolling(true);
+
         selectCity.d.setTextSize(getResources().getDimension(R.dimen.main_title_size));
     }
 
@@ -234,6 +246,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.start_remind_btn:
+            case R.id.dancing_ball:
                 if (checkoutGpsAndNetWork() && getPersimmions()){
                     updateStartBtnState();
                 }
@@ -304,16 +317,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 startRemindBtn.setBackgroundResource(R.drawable.ic_pause);
                 dancingView.startAnimation();
                 serachLayoutManagerRoot.setVisibility(View.GONE);
-                targetStationView.setVisibility(View.GONE);
-                favriteListBtn.setVisibility(View.GONE);
+                bottomView.setVisibility(View.GONE);
+                dancingView.addReminderList(mCustomAdapter.getList());
+                dancingView.setClickable(true);
             } else {
                 dancingView.stopAnimation();
                 mRemonderLocationService.setCancleReminder();
                 startRemindBtn.setBackgroundResource(R.drawable.ic_start);
                 //startRemindBtn.setText(R.string.start_remind);
                 serachLayoutManagerRoot.setVisibility(View.VISIBLE);
-                targetStationView.setVisibility(View.VISIBLE);
-                favriteListBtn.setVisibility(View.VISIBLE);
+                bottomView.setVisibility(View.VISIBLE);
+                dancingView.setClickable(false);
             }
         }else{
             Log.e(TAG,"updateStartBtnState not bind mRemonderLocationService");
@@ -579,6 +593,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         if(mRemonderLocationService != null) {
             mRemonderLocationService.removetReminder(selectResultInfo);
         }
+        dancingView.addReminderList(mCustomAdapter.getList());
     }
 
     @Override

@@ -10,13 +10,13 @@ import android.view.animation.LinearInterpolator;
 import com.wtach.stationremind.R;
 
 public class AnimUtil {
-    private final static int DURATION = 1500;
+    private final static int DURATION = 500;
     private AnimatorSet animatorSet = new AnimatorSet();
     /**
      * 设置旋转的动画
      */
     public void setAnimation(final View view, AnimatorListenerAdapter animatorListenerAdapter) {
-        ObjectAnimator  mObjectAnimator = ObjectAnimator.ofFloat(view, "rotation", 0, 360);
+        ObjectAnimator  mObjectAnimator = ObjectAnimator.ofFloat(view, "rotation", 0, 0);
         // 用 AnimatorSet 的方法来让三个动画协作执行
         animatorSet.playTogether(mObjectAnimator);
         animatorSet.setDuration(DURATION);

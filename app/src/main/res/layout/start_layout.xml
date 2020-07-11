@@ -12,13 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </ViewStub>
-    <com.wtach.stationremind.views.ScaleButton
-        android:id="@+id/start_anim_view"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/start_earth">
-    </com.wtach.stationremind.views.ScaleButton>
 
     <com.wtach.stationremind.views.ScaleButton
         android:id="@+id/empty_add_btn"
@@ -29,5 +22,13 @@
         android:layout_marginBottom="15dp"
         android:visibility="gone"
         android:background="@drawable/ic_add_selector">
+    </com.wtach.stationremind.views.ScaleButton>
+
+    <com.wtach.stationremind.views.ScaleButton
+        android:id="@+id/start_anim_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:background="@drawable/start_anim_bg">
     </com.wtach.stationremind.views.ScaleButton>
 </RelativeLayout>

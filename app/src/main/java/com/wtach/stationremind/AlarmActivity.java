@@ -445,7 +445,7 @@ public class AlarmActivity extends AlarmBaseActivity
                 PropertyValuesHolder.ofInt(AnimatorUtils.DRAWABLE_ALPHA,
                         BUTTON_DRAWABLE_ALPHA_DEFAULT, 255),
                 PropertyValuesHolder.ofObject(AnimatorUtils.DRAWABLE_TINT,
-                        AnimatorUtils.ARGB_EVALUATOR, Color.WHITE, tintColor));
+                        AnimatorUtils.ARGB_EVALUATOR, getColor(R.color.alarm_slide_color), tintColor));
     }
 
     private ValueAnimator getAlarmBounceAnimator(float translationX, final String text) {

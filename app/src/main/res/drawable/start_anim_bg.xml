@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@android:color/black" />
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/_ic_running"
+            android:tileMode="disabled" />
+    </item>
+
+    <item>
+        <bitmap
+            android:gravity="center_vertical|right"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_train"
+            android:tileMode="disabled" />
+    </item>
+    <item>
+        <bitmap
+            android:gravity="center_vertical|left"
+            android:scaleType="centerCrop"
+            android:src="@drawable/_ic_running"
+            android:tileMode="disabled" />
+    </item>
+</layer-list>

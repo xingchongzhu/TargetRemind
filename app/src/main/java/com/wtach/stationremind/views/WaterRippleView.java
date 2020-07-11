@@ -1,15 +1,18 @@
 package com.wtach.stationremind.views;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.wtach.stationremind.R;
 import com.wtach.stationremind.utils.DisplayUtils;
+import com.wtach.stationremind.utils.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +27,17 @@ public class WaterRippleView{
     private int mWidth = 0;
     private float mWaveStartWidth = 0f;// px = 0f
     private float mWaveEndWidth = 0f;// px 最大半径，超过波消失 = 0f
+    private final int START_WIDTH = 10;
+    private final int END_WIDTH = 40;
     private int mWaveColor = 0;
     private float mViewCenterX = 0f;
     private float mViewCenterY = 0f;
     private int rippleColor = Color.BLUE;
+    private int lineColor = Color.WHITE;
+    private int buttonColor = Color.WHITE;
     //波动属性设置
     private Paint mWavePaint = new Paint();
+    private Paint paint = new Paint();
     //中心点属性设置
     private Paint mWaveCenterShapePaint = new Paint();
     private boolean mFillAllView = false;
@@ -37,8 +45,13 @@ public class WaterRippleView{
 
     private final float FPS = 1000 / 60;
     private Wave mLastRmoveWave = null;
-
+   // private Bitmap pausIcon;
+    private float buttonSize = 0;
+    public RectF radiusRect = new RectF();
+    public RectF line1 = new RectF();
+    public RectF line2 = new RectF();
     private List<Wave> mWaves= new ArrayList();
+    private int lineWidht = 0;
 
     public WaterRippleView(Context context){
         init(context);
@@ -46,17 +59,42 @@ public class WaterRippleView{
 
     public void init(Context context) {
         setWaveInfo(2f, 1f, 2f, 15f, rippleColor);
-        mWaveIntervalSize = DisplayUtils.dip2px(context, 20f);
-        mWidth = DisplayUtils.dip2px(context, 2f);
+        mWaveIntervalSize = DisplayUtils.dip2px(context, 40f);
+        mWidth = DisplayUtils.dip2px(context, 1.5f);
         //初始化波动最大半径
         mWaveEndWidth = DisplayUtils.dip2px(context, 100f);
 
         mWavePaint.setAntiAlias(true);
-        mWavePaint.setStyle(Paint.Style.FILL);
+        mWavePaint.setStyle(Paint.Style.STROKE);
+        paint.setAntiAlias(true);
+        paint.setColor(Color.WHITE);
+        paint.setStrokeWidth(2);
 
         mWaveCenterShapePaint.setAntiAlias(true);
         mWaveCenterShapePaint.setStyle(Paint.Style.FILL);
         rippleColor = context.getColor(R.color.water_ripple_color);
+        buttonColor = context.getColor(R.color.water_ripple_color);
+    }
+
+    public void setWaveSize(Context context, float startWidth, float waveSize, float endWidth){
+        setWaveInfo(2f, 2f, startWidth, endWidth, rippleColor);
+        mWaveIntervalSize = DisplayUtils.dip2px(context, waveSize);
+       // pausIcon = Bitmap.createScaledBitmap(pausIcon, (int)startWidth, (int)startWidth, true);
+        buttonSize = startWidth;
+        radiusRect.left = (int) (mViewCenterX - buttonSize/2);
+        radiusRect.top = (int) (mViewCenterY - buttonSize/2);
+        radiusRect.right = (int) (mViewCenterX + buttonSize/2);
+        radiusRect.bottom = (int) (mViewCenterY + buttonSize/2);
+        lineWidht = (int) (buttonSize/8);
+        line1.left = (int) (mViewCenterX - lineWidht*1.2f);
+        line1.top = (int) (mViewCenterY - buttonSize/5);
+        line1.right =  line1.left;
+        line1.bottom = (int) (mViewCenterY + buttonSize/5);
+
+        line2.left = (int) (mViewCenterX + lineWidht*1.2f);
+        line2.top = (int) (mViewCenterY - buttonSize/5);
+        line2.right = line2.left;
+        line2.bottom =  (int) (mViewCenterY + buttonSize/5);
     }
 
     /**
@@ -95,11 +133,10 @@ public class WaterRippleView{
         mFillWaveSourceShapeRadius = radius;
     }
 
-
     protected void onLayout(boolean changed, int left, int top, int right, int bottom, int width, int height) {
 
         mViewCenterX = width / 2;
-        mViewCenterY = height / 2;
+        mViewCenterY = height / 5 * 3;
 
         mWaveEndWidth = Math.min(mViewCenterX,mViewCenterY);
         float waveAreaRadius = mMaxWaveAreaRadius;
@@ -116,6 +153,7 @@ public class WaterRippleView{
 
     public void onDraw(Canvas canvas) {
         stir();
+        mWavePaint.setStyle(Paint.Style.STROKE);
         for (Wave w : mWaves) {
             mWavePaint.setColor(w.color);
             mWavePaint.setStrokeWidth(mWidth);
@@ -125,6 +163,22 @@ public class WaterRippleView{
                     mViewCenterX+w.radius/2, mViewCenterY+w.radius/2);
             canvas.drawOval(rectF,mWavePaint);
         }
+        drawBtn(canvas);
+        //canvas.drawBitmap(pausIcon,mViewCenterX-pausIcon.getWidth()/2, mViewCenterY-pausIcon.getHeight()/2,paint);
+    }
+
+    private void drawBtn(Canvas canvas){
+        mWavePaint.setStyle(Paint.Style.FILL);
+        mWavePaint.setColor(buttonColor);
+        mWavePaint.setStrokeWidth(2);
+        mWavePaint.setAlpha(255);
+        canvas.drawOval(radiusRect,mWavePaint);
+
+        mWavePaint.setColor(lineColor);
+        mWavePaint.setStrokeCap(Paint.Cap.ROUND);
+        mWavePaint.setStrokeWidth(lineWidht);
+        canvas.drawLine(line1.left,line1.top,line1.right,line1.bottom,mWavePaint);
+        canvas.drawLine(line2.left,line2.top,line2.right,line2.bottom,mWavePaint);
     }
 
     /**
@@ -141,6 +195,7 @@ public class WaterRippleView{
             } else {
                 w = new Wave();
             }
+            w.radius = mWaveStartWidth - mStirStep;
             mWaves.add(0, w);
         }
         float waveWidthIncrease = mWaveEndWidth - mWaveStartWidth;
