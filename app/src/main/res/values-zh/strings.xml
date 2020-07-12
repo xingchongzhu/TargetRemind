@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">位置提醒</string>
+    <string name="app_name">识途</string>
     <string name="secret_declare_title" translatable="false">位置提醒声明</string>
     <string name="secret_declare_content" translatable="false">“位置提醒” 是用于具体用途的软件。
         为了实现上述目的，我们在向您 提供服务时，

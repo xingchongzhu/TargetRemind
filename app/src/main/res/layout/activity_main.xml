@@ -6,79 +6,80 @@
     android:layout_height="match_parent"
     android:layout_margin="3dp"
     tools:context=".MainActivity">
+
     <com.heytap.wearable.support.widget.HeyBackTitleBar
         android:id="@+id/select_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_margin="5dp"
-        app:heyText="深圳"
+        android:textColor="@color/item_text_color"
+        android:textSize="@dimen/title_size"
         app:heyClockColor="#ffffff"
         app:heyEllipsize="marquee"
+        app:heyText="深圳"
         app:heyTitleShowIcon="true"
-        android:textSize="@dimen/title_size"
-        android:textColor="@color/item_text_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 
-    <com.wtach.stationremind.views.ScaleButton
-        android:id="@+id/collect"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:padding="5dp"
-        android:background="@drawable/ic_collect"
-        android:layout_gravity="center_vertical"
-        app:layout_goneMarginRight="30dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/select_city"
-        android:gravity="center_vertical"
-        android:visibility="gone"
-        tools:ignore="MissingConstraints">
-    </com.wtach.stationremind.views.ScaleButton>
 
     <ViewStub
         android:id="@+id/view_stub"
-        android:layout="@layout/station_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/edit_margin"
         android:layout_marginRight="@dimen/edit_margin"
+        android:layout="@layout/station_layout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.wtach.stationremind.views.DancingView
-        android:id="@+id/dancing_ball"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:lineColor="#ffffff"
-        app:pointColor="#ffffff"
-        app:ballColor="#de4848"
-        app:lineWidth="100dp"
-        app:lineHeight="1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="1.0"
-        app:layout_constraintHeight_percent="0.8"
-        android:layout_marginTop="5dp"
-        tools:ignore="MissingConstraints">
-    </com.wtach.stationremind.views.DancingView>
-
+        app:layout_constraintTop_toTopOf="@id/select_city" />
 
     <include
         android:id="@+id/bottom_btn_layout"
         layout="@layout/bottom_btn_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <com.wtach.stationremind.views.DancingView
+        android:id="@+id/dancing_ball"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        app:ballColor="#de4848"
+        app:layout_constraintBottom_toBottomOf="@id/bottom_btn_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/select_city"
+        app:layout_constraintWidth_percent="1.0"
+        app:lineColor="#ffffff"
+        app:lineHeight="1dp"
+        app:lineWidth="100dp"
+        app:pointColor="#ffffff"
+        tools:ignore="MissingConstraints"></com.wtach.stationremind.views.DancingView>
+
+    <com.wtach.stationremind.views.ScaleButton
+        android:id="@+id/collect"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/ic_collect"
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:visibility="gone" />
+        app:layout_constraintTop_toBottomOf="@id/select_city"
+        app:layout_goneMarginRight="70dp"
+        tools:ignore="MissingConstraints"></com.wtach.stationremind.views.ScaleButton>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

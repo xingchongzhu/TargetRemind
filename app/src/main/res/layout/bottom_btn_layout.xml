@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="horizontal"
+    android:background="#BF000000"
     android:layout_marginBottom="@dimen/bottom_btn_margin">
 
     <com.wtach.stationremind.views.ScaleButton

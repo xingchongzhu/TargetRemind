@@ -28,6 +28,7 @@
         android:drawableRight="@drawable/ic_voice_icon"
         android:hint="@string/start_record_recognize"
         android:textColor="#ffffff"
+        android:clickable="true"
         android:singleLine="true"
         android:textSize="@dimen/textvie_item_text_size" />
 

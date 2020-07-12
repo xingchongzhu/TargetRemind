@@ -378,6 +378,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                             startRemindBtn.setEnabled(true);
                             startRemindBtn.setClickable(true);
                             updateRecycleVisible(false);
+
+                            if(mFavoriteInfo.getCurrentCollectInfo() != null) {
+                                CollectInfo collectInfo = new CollectInfo(mFavoriteInfo.getCurrentCollectInfo().getName(),mCustomAdapter.getList());
+                                saveFavorite(collectInfo);
+                            }
                         }
                     }
                 }
@@ -390,10 +395,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         if(mCustomAdapter.getItemCount() > 0 || mFavoriteCustomAdapter.getItemCount() > 0) {
             bottomView.setVisibility(View.VISIBLE);
             emptyAddBtn.setVisibility(View.GONE);
+            selectTargetHint.setClickable(false);
         }else{
             bottomView.setVisibility(View.GONE);
             emptyAddBtn.setVisibility(View.VISIBLE);
             selectTargetHint.setText(getString(R.string.add_target_hint));
+            selectTargetHint.setClickable(true);
+            selectTargetHint.setGravity(Gravity.CENTER_HORIZONTAL);
         }
     }
 
@@ -407,12 +415,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             }else{
                 selectTargetHint.setGravity(Gravity.CENTER_HORIZONTAL);
                 selectTargetHint.setText("");
-                selectTargetHint.setHint(R.string.add_target_hint);
+                selectTargetHint.setHint(R.string.favorite_list_empty);
+                selectTargetHint.setClickable(true);
             }
         }else{
             mFavoriteRecyler.setVisibility(View.GONE);
             mTargetRecyclerView.setVisibility(View.VISIBLE);
             updateTargetNumberHint(mCustomAdapter.getItemCount());
+            selectTargetHint.setClickable(false);
         }
         updateCollectBtnVisiable();
         updateEmptyBtn();
@@ -450,6 +460,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     protected void onDestroy() {
+        Log.d("zxc","onDestroy");
         super.onDestroy();
         if(connection != null) {
             unbindService(connection);
@@ -582,6 +593,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             if (mCustomAdapter.getItemCount() <= 0) {
                 updateStartBtnState();
             }
+            if(mFavoriteInfo.getCurrentCollectInfo() != null) {
+                CollectInfo collectInfo = new CollectInfo(mFavoriteInfo.getCurrentCollectInfo().getName(),mCustomAdapter.getList());
+                saveFavorite(collectInfo);
+            }
         }else if(mFavoriteRecyler.getVisibility() == View.VISIBLE) {
             mFavoriteCustomAdapter.removeData(position);
             removeCollectInfo((CollectInfo) mFavoriteCustomAdapter.getDataIndex(position));
@@ -605,10 +620,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         if(number > 0) {
             selectTargetHint.setGravity(Gravity.LEFT);
             selectTargetHint.setText(String.format(getString(R.string.select_target_numbuer),number));
+            selectTargetHint.setClickable(false);
         }else{
             selectTargetHint.setText("");
             selectTargetHint.setHint(R.string.add_target_hint);
             selectTargetHint.setGravity(Gravity.CENTER_HORIZONTAL);
+            selectTargetHint.setClickable(true);
         }
     }
 

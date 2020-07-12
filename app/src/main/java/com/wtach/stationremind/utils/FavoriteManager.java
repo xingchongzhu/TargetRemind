@@ -21,20 +21,24 @@ public class FavoriteManager {
         String string = (String) AppSharePreferenceMgr.get(context,IDef.FAVORITE_LIST_NAME_KEY,"");
         String[] splits = null;
         StringBuilder stringBuilder = new StringBuilder(string);
+        boolean hasExist = false;
         if (!TextUtils.isEmpty(string)) {
             splits = string.split(IDef.TARGET_LIST_SPLIT);
             for(String str : splits){
                 if(str.equals(collectInfo.getName())){
-                    removeCollect(context,collectInfo.getName());
+                    //removeCollect(context,collectInfo.getName());
                     //Toast.makeText(context,context.getString(R.string.name_same_hnit),Toast.LENGTH_LONG).show();
-                    return false;
+                    //return false;
+                    hasExist = true;
+                    break;
                 }
             }
         }
-        stringBuilder.append(collectInfo.getName());
-        stringBuilder.append(IDef.TARGET_LIST_SPLIT);
-        AppSharePreferenceMgr.put(context,IDef.FAVORITE_LIST_NAME_KEY,stringBuilder.toString());
-
+        if(!hasExist) {
+            stringBuilder.append(collectInfo.getName());
+            stringBuilder.append(IDef.TARGET_LIST_SPLIT);
+            AppSharePreferenceMgr.put(context, IDef.FAVORITE_LIST_NAME_KEY, stringBuilder.toString());
+        }
         AppSharePreferenceMgr.putSerializableList(context,collectInfo);
         return true;
     }

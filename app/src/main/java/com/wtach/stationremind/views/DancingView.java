@@ -118,8 +118,8 @@ public class DancingView extends View {
         super.onLayout(changed, left, top, right, bottom);
         waterRippleView.onLayout(changed, left, top, right, bottom,getWidth(),getHeight());
         centerX = getWidth() / 2 - bonuceIccn.getWidth()/2;
-        float radius = getWidth() / 5 * 4;
-        waterRippleView.setWaveSize(getContext(),radius/5,radius/5,radius);
+        float radius = getWidth();
+        waterRippleView.setWaveSize(getContext(),radius/4,radius/4,radius);
     }
 
     private void initController() {
@@ -198,16 +198,19 @@ public class DancingView extends View {
 
     private void drawText(Canvas canvas){
         Iterator iterator = LoacationList.iterator();
-        textY = 0;
+        textY = 35;
+        int n = LoacationList.size();
+        int count = n;
         while (iterator.hasNext()){
             SelectResultInfo selectResultInfo = (SelectResultInfo) iterator.next();
             String str = selectResultInfo.getKey();
             mTextPaint.getTextBounds(str, 0, str.length(), rect);
+            mTextPaint.setAlpha(Math.max(255*count/n,50));
             textX = (getWidth()-rect.width())/2;
             textY += rect.height() * 1.5f;
             canvas.drawText(str,textX,textY,mTextPaint);
+            count--;
         }
-
     }
 
     @Override

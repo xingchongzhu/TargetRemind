@@ -202,6 +202,16 @@ public class AlarmActivity extends AlarmBaseActivity
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String title = intent.getStringExtra("title").replace(getString(R.string.arrived_reminder),"").replace(getString(R.string.changet_hint_tile),"");
+        String string = titleTextView.getText().toString()+title;
+        titleTextView.setText(string);
+        hintText = intent.getBooleanExtra("arrive", true)?getResources().getString(R.string.alarm_alert_off_text):
+                getResources().getString(R.string.alarm_alert_snoozed_text);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         resetAnimations();

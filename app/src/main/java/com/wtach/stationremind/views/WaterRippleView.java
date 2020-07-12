@@ -87,14 +87,14 @@ public class WaterRippleView{
         radiusRect.bottom = (int) (mViewCenterY + buttonSize/2);
         lineWidht = (int) (buttonSize/8);
         line1.left = (int) (mViewCenterX - lineWidht*1.2f);
-        line1.top = (int) (mViewCenterY - buttonSize/5);
+        line1.top = (int) (mViewCenterY - buttonSize/6);
         line1.right =  line1.left;
-        line1.bottom = (int) (mViewCenterY + buttonSize/5);
+        line1.bottom = (int) (mViewCenterY + buttonSize/6);
 
         line2.left = (int) (mViewCenterX + lineWidht*1.2f);
-        line2.top = (int) (mViewCenterY - buttonSize/5);
+        line2.top = (int) (mViewCenterY - buttonSize/6);
         line2.right = line2.left;
-        line2.bottom =  (int) (mViewCenterY + buttonSize/5);
+        line2.bottom =  (int) (mViewCenterY + buttonSize/6);
     }
 
     /**
@@ -136,7 +136,7 @@ public class WaterRippleView{
     protected void onLayout(boolean changed, int left, int top, int right, int bottom, int width, int height) {
 
         mViewCenterX = width / 2;
-        mViewCenterY = height / 5 * 3;
+        mViewCenterY = height * 0.6f;
 
         mWaveEndWidth = Math.min(mViewCenterX,mViewCenterY);
         float waveAreaRadius = mMaxWaveAreaRadius;

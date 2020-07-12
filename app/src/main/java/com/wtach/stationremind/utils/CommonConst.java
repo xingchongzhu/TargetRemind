@@ -7,7 +7,7 @@ public class CommonConst {
     public static final String ACTIVITY_RESULT_SELECT_KEY = "activity_result_select_key";
     public static final String SECRET_PERMISSION_DECLARE_KEY = "secret_permission_declare_key";
 
-    public static final int REMIND_MAX_COUNT = 6;
+    public static final int REMIND_MAX_COUNT = 5;
 
     public static final int TARGETRANGE = 3000;
 }

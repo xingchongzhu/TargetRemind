@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">位置提醒</string>
+    <string name="app_name">识途</string>
     <string name="secret_declare_title" translatable="false">位置提醒声明</string>
     <string name="secret_declare_content" translatable="false">“位置提醒” 是用于具体用途的软件。
         为了实现上述目的，我们在向您 提供服务时，
@@ -50,6 +50,7 @@
     <string name="cancle" translatable="false">取消</string>
     <string name="favorite_list_title" translatable="false">收藏列表</string>
     <string name="add_target_hint" translatable="false">点击添加位置提醒</string>
+    <string name="favorite_list_empty" translatable="false">收藏列表为空</string>
     <string name="collect_name_title" translatable="false">收藏夹命名</string>
     <string name="new_collect_nema" translatable="false">新建命名</string>
 </resources>

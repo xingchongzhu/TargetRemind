@@ -15,12 +15,16 @@
         android:layout_marginLeft="5dp">
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/end_red_route"
             android:gravity="center_vertical|start"
-            android:hint="@string/seletc_target_station_title"
             android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
             android:drawablePadding="5dp"
             android:textColor="@color/blue"
             android:textSize="@dimen/textvie_item_text_size" />
@@ -29,9 +33,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="start|center_vertical"
-            android:hint="@string/seletc_target_station_title"
             android:singleLine="true"
-            android:textColor="@color/edit_window"
+            android:scrollHorizontally="true"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:textColor="@color/blue"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
             android:paddingRight="30dp"
             android:textSize="@dimen/textvie_item_content_text_size" />
     </LinearLayout>

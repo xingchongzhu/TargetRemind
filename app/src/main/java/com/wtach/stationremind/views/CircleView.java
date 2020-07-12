@@ -323,8 +323,6 @@ public class CircleView extends View {
                 mCenterX = getWidth();
                 break;
         }
-        if(mCenterX > 0)
-        Log.d(TAG,"setCenterX mCenterX = "+mCenterX+"width = "+getWidth(),new Throwable());
         switch (absoluteGravity & Gravity.VERTICAL_GRAVITY_MASK) {
             case Gravity.TOP:
                 mCenterY = 0.0f;
