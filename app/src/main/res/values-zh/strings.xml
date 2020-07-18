@@ -11,7 +11,7 @@
     <string name="enture" translatable="false">同意</string>
     <string name="cancel" translatable="false">退出</string>
     <string name="seletc_city_title" translatable="false">城市</string>
-    <string name="seletc_target_station_title" translatable="false">添加目标位置</string>
+    <string name="seletc_target_station_title" translatable="false">添加提醒位置</string>
     <string name="current_location" translatable="false">自动定位当前位置</string>
     <string name="target_location" translatable="false">目标</string>
     <string name="start_remind" translatable="false">开始</string>
@@ -32,7 +32,7 @@
     <string name="sug_result" translatable="false">搜索内容</string>
     <string name="search_history" translatable="false">搜索历史</string>
     <string name="city_list" translatable="false">城市列表</string>
-    <string name="stop_hint" translatable="false">"结束提醒再会!"</string>
+    <string name="stop_hint" translatable="false">"注意提醒!"</string>
     <string name="alarm_alert_off_text" translatable="false">"抵达目的地"</string>
     <string name="alarm_alert_snoozed_text" translatable="false">"注意换乘"</string>
     <string name="open_gps_titls" translatable="false">检查GPS或网络</string>

@@ -39,7 +39,7 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
         this.mAdapterChangeListener = mAdapterChangeListener;
     }
 
-    public List<Object> getList() {
+    public List getList() {
         return list;
     }
 
@@ -51,9 +51,6 @@ public class CustomAdapter extends RecyclerView.Adapter <RecyclerView.ViewHolder
     }
 
     public void setData(List<Object> list){
-        if(this.list != null){
-            this.list.clear();
-        }
         this.list = list;
         notifyDataSetChanged();
         notifyCountChange();

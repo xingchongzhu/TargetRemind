@@ -1,6 +1,7 @@
 package com.wtach.stationremind.object;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class FavoriteInfo {
@@ -12,8 +13,26 @@ public class FavoriteInfo {
         favoriteMap.add(collectInfo);
     }
 
+    public void updateFavorite(CollectInfo collectInfo){
+        Iterator<CollectInfo> iterator = favoriteMap.iterator();
+        while (iterator.hasNext()){
+            CollectInfo temp = iterator.next();
+            if(temp.getName().equals(collectInfo.getName())){
+                temp.setList(collectInfo.getList());
+                break;
+            }
+        }
+    }
+
     public void removeFavorite(CollectInfo collectInfo){
-        favoriteMap.remove(collectInfo);
+        Iterator<CollectInfo> iterator = favoriteMap.iterator();
+        while (iterator.hasNext()){
+            CollectInfo temp = iterator.next();
+            if(temp.getName().equals(collectInfo.getName())){
+                iterator.remove();
+                break;
+            }
+        }
     }
 
     public void clear(){

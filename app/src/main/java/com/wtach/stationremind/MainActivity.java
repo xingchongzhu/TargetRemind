@@ -192,7 +192,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         GridLayoutManager favoritelayoutManager = new GridLayoutManager(this,1);
         mFavoriteRecyler.setLayoutManager(favoritelayoutManager);
         mCustomAdapter = initAdapter(null,mTargetRecyclerView);
+        mCustomAdapter.setAdapterChangeListener(this);
         mFavoriteCustomAdapter = initAdapter(null,mFavoriteRecyler);
+        selectTargetHint.setOnClickListener(this);
     }
 
     private void loadHistoryTarget() {
@@ -236,7 +238,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     private CustomAdapter initAdapter(List<Object> list,RecyclerView recyclerView) {
         CustomAdapter adapter = new CustomAdapter(list);
-        adapter.setAdapterChangeListener(this);
         adapter.setOnRecyItemClickListener(this);
         recyclerView.setAdapter(adapter);
         return adapter;
@@ -248,10 +249,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             case R.id.start_remind_btn:
             case R.id.dancing_ball:
                 if (checkoutGpsAndNetWork() && getPersimmions()){
-                    updateStartBtnState();
+                    if (!mRemonderLocationService.isReminder() && mCustomAdapter.getItemCount() <= 0 && mFavoriteCustomAdapter.getItemCount() > 0) {
+                        onItemClick(null,0);
+                    }else{
+                        updateStartBtnState();
+                    }
                 }
                 break;
             case R.id.add_target_btn:
+            case R.id.select_target_hint:
             case R.id.empty_add_btn:
                 StartActivityUtils.startActivity(MainActivity.this,SearchActivity.class, REQUES_SEARCH_ACTIVITY_END_STATION_CODE,
                         CommonConst.ACTIVITY_SELECT_TYPE_KEY, REQUES_SEARCH_ACTIVITY_END_STATION_CODE);
@@ -276,7 +282,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 @Override
                 public void nameComplete(String name) {
                     CollectInfo collectInfo = new CollectInfo(name,mCustomAdapter.getList());
-                    saveFavorite(collectInfo);
+                    addFavorite(collectInfo);
                     updateCollectState(collectInfo);
                 }
 
@@ -290,9 +296,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
-    private void saveFavorite(CollectInfo collectInfo){
-        FavoriteManager.saveShareList(this,collectInfo);
+    private void addFavorite(CollectInfo collectInfo){
+        FavoriteManager.saveShareList(this, collectInfo);
         getFavoriteList();
+        final List list = mFavoriteInfo != null ? mFavoriteInfo.favoriteMap : null;
+        mFavoriteCustomAdapter.setData(list);
+    }
+
+    private void saveFavorite(CollectInfo collectInfo){
+        if(collectInfo.getList().size() <= 0){
+            removeCollectInfo(collectInfo);
+        }else{
+            FavoriteManager.saveShareList(this, collectInfo);
+        }
+        mFavoriteInfo.updateFavorite(collectInfo);
+        //getFavoriteList();
         final List list = mFavoriteInfo != null ? mFavoriteInfo.favoriteMap : null;
         mFavoriteCustomAdapter.setData(list);
     }
@@ -380,7 +398,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                             updateRecycleVisible(false);
 
                             if(mFavoriteInfo.getCurrentCollectInfo() != null) {
-                                CollectInfo collectInfo = new CollectInfo(mFavoriteInfo.getCurrentCollectInfo().getName(),mCustomAdapter.getList());
+                                CollectInfo collectInfo = mFavoriteInfo.getCurrentCollectInfo();
+                                collectInfo.setList(mCustomAdapter.getList());
                                 saveFavorite(collectInfo);
                             }
                         }
@@ -409,7 +428,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         if(favoriteVisiable) {
             mFavoriteRecyler.setVisibility(View.VISIBLE);
             mTargetRecyclerView.setVisibility(View.GONE);
-            if(mFavoriteCustomAdapter.getItemCount() > 0){
+            if(mFavoriteInfo.favoriteMap.size() > 0){
                 selectTargetHint.setGravity(Gravity.LEFT);
                 selectTargetHint.setText(getString(R.string.favorite_list_title));
             }else{
@@ -594,12 +613,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 updateStartBtnState();
             }
             if(mFavoriteInfo.getCurrentCollectInfo() != null) {
-                CollectInfo collectInfo = new CollectInfo(mFavoriteInfo.getCurrentCollectInfo().getName(),mCustomAdapter.getList());
+                CollectInfo collectInfo = mFavoriteInfo.getCurrentCollectInfo();
+                collectInfo.setList(mCustomAdapter.getList());
                 saveFavorite(collectInfo);
             }
         }else if(mFavoriteRecyler.getVisibility() == View.VISIBLE) {
             mFavoriteCustomAdapter.removeData(position);
             removeCollectInfo((CollectInfo) mFavoriteCustomAdapter.getDataIndex(position));
+            updateRecycleVisible(true);
         }
     }
 

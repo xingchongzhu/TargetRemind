@@ -198,12 +198,14 @@ public class DancingView extends View {
 
     private void drawText(Canvas canvas){
         Iterator iterator = LoacationList.iterator();
-        textY = 35;
         int n = LoacationList.size();
         int count = n;
+        String str = "test";
+        mTextPaint.getTextBounds(str, 0, str.length(), rect);
+        textY = rect.height() * 1.5f;
         while (iterator.hasNext()){
             SelectResultInfo selectResultInfo = (SelectResultInfo) iterator.next();
-            String str = selectResultInfo.getKey();
+            str = selectResultInfo.getKey();
             mTextPaint.getTextBounds(str, 0, str.length(), rect);
             mTextPaint.setAlpha(Math.max(255*count/n,50));
             textX = (getWidth()-rect.width())/2;

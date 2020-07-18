@@ -15,8 +15,8 @@ android {
         applicationId "com.wtach.stationremind"
         minSdkVersion 27
         targetSdkVersion 27
-        versionCode 111
-        versionName "1.1.1"
+        versionCode 120
+        versionName "1.2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [
                 "service_permission": "com.heytap.wearable.oms.permission.TRACSPORT",

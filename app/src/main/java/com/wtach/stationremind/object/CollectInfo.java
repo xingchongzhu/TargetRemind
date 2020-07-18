@@ -23,6 +23,10 @@ public class CollectInfo {
         return list;
     }
 
+    public void setList(List list){
+        this.list = list;
+    }
+
     public String getContent(){
         StringBuilder stringBuilder = new StringBuilder();
         if(list == null){
