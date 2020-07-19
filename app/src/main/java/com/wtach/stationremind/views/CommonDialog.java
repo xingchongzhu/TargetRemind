@@ -3,7 +3,10 @@ package com.wtach.stationremind.views;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,7 +18,7 @@ import com.wtach.stationremind.RecognizerObserver;
  * description:自定义dialog
  */
 
-public class CommonDialog extends Dialog {
+public class CommonDialog extends Dialog{
     /**
      * 显示的图片
      */
@@ -168,6 +171,7 @@ public class CommonDialog extends Dialog {
         messageTv = (TextView) findViewById(R.id.message);
         audioWaveView = (AudioWaveView) findViewById(R.id.audioview);
         columnLineView = findViewById(R.id.column_line);
+        messageTv.setCursorVisible(false);
     }
 
     /**
@@ -178,6 +182,8 @@ public class CommonDialog extends Dialog {
         this.onClickBottomListener = onClickBottomListener;
         return this;
     }
+
+
     public interface OnClickBottomListener{
         /**
          * 点击确定按钮事件

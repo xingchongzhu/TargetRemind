@@ -88,21 +88,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private FavoriteInfo mFavoriteInfo;
     private Handler handler = new Handler();
     private AnimUtil mAnimUtil = new AnimUtil();
+    private TextView hintText;
     private View emptyAddBtn;
     private View bottomView;
     private View favriteListBtn;
+    private View mainLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_layout);
         emptyAddBtn = findViewById(R.id.empty_add_btn);
+        hintText = findViewById(R.id.hint_text);
         emptyAddBtn.setClickable(true);
         emptyAddBtn.setOnClickListener(this);
-
-        ((ViewStub)findViewById(R.id.main_layout)).inflate();
+        mainLayout = ((ViewStub)findViewById(R.id.main_layout)).inflate();
+        mainLayout.setVisibility(View.GONE);
         initView();
-
 
         mAnimUtil.setAnimation(findViewById(R.id.start_anim_view), new AnimatorListenerAdapter() {
             @Override
@@ -163,7 +165,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     private void initStatusBar(){
         selectCity.c.setTextSize(getResources().getDimension(R.dimen.main_clock_title_size));
-        selectCity.a.setImageDrawable(getDrawable(R.drawable.ic_location));
+        selectCity.a.setImageDrawable(getDrawable(R.drawable.ic_keyboard_arrow_left_black_24dp));
         selectCity.d.setTextColor(getColor(R.color.blue));
 
         selectCity.d.setMarqueeRepeatLimit(Integer.MAX_VALUE);
@@ -194,7 +196,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         mCustomAdapter = initAdapter(null,mTargetRecyclerView);
         mCustomAdapter.setAdapterChangeListener(this);
         mFavoriteCustomAdapter = initAdapter(null,mFavoriteRecyler);
-        selectTargetHint.setOnClickListener(this);
+        hintText.setOnClickListener(this);
     }
 
     private void loadHistoryTarget() {
@@ -222,6 +224,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 }
                 mFavoriteCustomAdapter.setData(list);
                 updateRecycleVisible(true);
+                if(mFavoriteCustomAdapter.getItemCount() > 0 || mCustomAdapter.getItemCount() > 0) {
+                    updateEmptyBtn(false);
+                }else{
+                    updateEmptyBtn(true);
+                }
             }
         });
     }
@@ -249,15 +256,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             case R.id.start_remind_btn:
             case R.id.dancing_ball:
                 if (checkoutGpsAndNetWork() && getPersimmions()){
-                    if (!mRemonderLocationService.isReminder() && mCustomAdapter.getItemCount() <= 0 && mFavoriteCustomAdapter.getItemCount() > 0) {
-                        onItemClick(null,0);
-                    }else{
-                        updateStartBtnState();
-                    }
+                    updateStartBtnState();
                 }
                 break;
             case R.id.add_target_btn:
-            case R.id.select_target_hint:
+            case R.id.hint_text:
             case R.id.empty_add_btn:
                 StartActivityUtils.startActivity(MainActivity.this,SearchActivity.class, REQUES_SEARCH_ACTIVITY_END_STATION_CODE,
                         CommonConst.ACTIVITY_SELECT_TYPE_KEY, REQUES_SEARCH_ACTIVITY_END_STATION_CODE);
@@ -272,6 +275,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     updateRecycleVisible(false);
                 }
                 break;
+            case R.id.select_city:
+                updateEmptyBtnState();
+                break;
+        }
+    }
+
+
+    private void updateEmptyBtnState(){
+        if(emptyAddBtn.getVisibility() == View.VISIBLE){
+            if(mCustomAdapter.getItemCount() > 0 || mFavoriteCustomAdapter.getItemCount() > 0) {
+                updateEmptyBtn(false);
+            }
+        }else{
+            updateEmptyBtn(true);
         }
     }
 
@@ -332,20 +349,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 if (mRemonderLocationService != null) {
                     mRemonderLocationService.addReminderList(mCustomAdapter.getList());
                 }
-                startRemindBtn.setBackgroundResource(R.drawable.ic_pause);
+                //startRemindBtn.setBackgroundResource(R.drawable.ic_pause);
                 dancingView.startAnimation();
                 serachLayoutManagerRoot.setVisibility(View.GONE);
                 bottomView.setVisibility(View.GONE);
                 dancingView.addReminderList(mCustomAdapter.getList());
                 dancingView.setClickable(true);
+                selectCity.setClickable(false);
+                selectCity.a.setImageDrawable(null);
             } else {
                 dancingView.stopAnimation();
                 mRemonderLocationService.setCancleReminder();
-                startRemindBtn.setBackgroundResource(R.drawable.ic_start);
+                //startRemindBtn.setBackgroundResource(R.drawable.ic_start);
                 //startRemindBtn.setText(R.string.start_remind);
                 serachLayoutManagerRoot.setVisibility(View.VISIBLE);
                 bottomView.setVisibility(View.VISIBLE);
                 dancingView.setClickable(false);
+                selectCity.setClickable(true);
+                if(emptyAddBtn.getVisibility() == View.VISIBLE) {
+                    selectCity.a.setImageDrawable(getDrawable(R.drawable.ic_keyboard_arrow_left_black_24dp));
+                }else{
+                    selectCity.a.setImageDrawable(getDrawable(R.drawable.ic_home));
+                }
             }
         }else{
             Log.e(TAG,"updateStartBtnState not bind mRemonderLocationService");
@@ -385,6 +410,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     }else {
                         if (mTargetStation != null) {
                             //targetStationView.setText(mTargetStation.getKey());
+                            if(emptyAddBtn.getVisibility() == View.VISIBLE){
+                                mCustomAdapter.setData(null);
+                                mFavoriteInfo.setCurrentCollectInfo(null);
+                            }
+                            updateEmptyBtn(false);
                             int count = mCustomAdapter.getItemCount();
                             for(int i = 0;i < count; i++){
                                 SelectResultInfo selectResultInfo = (SelectResultInfo) mCustomAdapter.getList().get(i);
@@ -410,17 +440,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         Log.d(TAG,"onActivityResult result = "+result);
     }
 
-    private void updateEmptyBtn(){
-        if(mCustomAdapter.getItemCount() > 0 || mFavoriteCustomAdapter.getItemCount() > 0) {
-            bottomView.setVisibility(View.VISIBLE);
-            emptyAddBtn.setVisibility(View.GONE);
-            selectTargetHint.setClickable(false);
-        }else{
-            bottomView.setVisibility(View.GONE);
+    private void updateEmptyBtn(boolean addEmpytPage){
+        if(addEmpytPage){
+            mainLayout.setVisibility(View.GONE);
+            hintText.setVisibility(View.VISIBLE);
             emptyAddBtn.setVisibility(View.VISIBLE);
-            selectTargetHint.setText(getString(R.string.add_target_hint));
-            selectTargetHint.setClickable(true);
-            selectTargetHint.setGravity(Gravity.CENTER_HORIZONTAL);
+            hintText.setHint(R.string.add_target_hint);
+            selectCity.a.setImageDrawable(getDrawable(R.drawable.ic_keyboard_arrow_left_black_24dp));
+        }else{
+            mainLayout.setVisibility(View.VISIBLE);
+            hintText.setVisibility(View.GONE);
+            emptyAddBtn.setVisibility(View.GONE);
+            selectCity.a.setImageDrawable(getDrawable(R.drawable.ic_home));
         }
     }
 
@@ -431,20 +462,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             if(mFavoriteInfo.favoriteMap.size() > 0){
                 selectTargetHint.setGravity(Gravity.LEFT);
                 selectTargetHint.setText(getString(R.string.favorite_list_title));
+                hintText.setVisibility(View.GONE);
             }else{
-                selectTargetHint.setGravity(Gravity.CENTER_HORIZONTAL);
                 selectTargetHint.setText("");
-                selectTargetHint.setHint(R.string.favorite_list_empty);
-                selectTargetHint.setClickable(true);
+                hintText.setVisibility(View.VISIBLE);
+                hintText.setHint(R.string.favorite_list_empty);
             }
+            startRemindBtn.setClickable(false);
+            targetStationView.setClickable(false);
+            targetStationView.setBackground(getDrawable(R.drawable.ic_add_target_disable));
+            startRemindBtn.setBackground(getDrawable(R.drawable.ic_start_disable));
         }else{
             mFavoriteRecyler.setVisibility(View.GONE);
             mTargetRecyclerView.setVisibility(View.VISIBLE);
+            targetStationView.setClickable(true);
+            targetStationView.setBackground(getDrawable(R.drawable.ic_add_selector));
             updateTargetNumberHint(mCustomAdapter.getItemCount());
-            selectTargetHint.setClickable(false);
+            if(mCustomAdapter.getItemCount() > 0) {
+                startRemindBtn.setClickable(true);
+                startRemindBtn.setBackground(getDrawable(R.drawable.ic_start));
+            }
         }
         updateCollectBtnVisiable();
-        updateEmptyBtn();
     }
 
     private void updateCollectBtnVisiable(){
@@ -479,7 +518,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     protected void onDestroy() {
-        Log.d("zxc","onDestroy");
         super.onDestroy();
         if(connection != null) {
             unbindService(connection);
@@ -639,14 +677,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     private void updateTargetNumberHint(int number){
         if(number > 0) {
-            selectTargetHint.setGravity(Gravity.LEFT);
             selectTargetHint.setText(String.format(getString(R.string.select_target_numbuer),number));
-            selectTargetHint.setClickable(false);
+            hintText.setVisibility(View.GONE);
+            startRemindBtn.setClickable(true);
+            startRemindBtn.setBackground(getDrawable(R.drawable.ic_start));
         }else{
             selectTargetHint.setText("");
-            selectTargetHint.setHint(R.string.add_target_hint);
-            selectTargetHint.setGravity(Gravity.CENTER_HORIZONTAL);
-            selectTargetHint.setClickable(true);
+            hintText.setVisibility(View.VISIBLE);
+            hintText.setHint(R.string.add_target_hint);
+            startRemindBtn.setBackground(getDrawable(R.drawable.ic_start_disable));
         }
     }
 

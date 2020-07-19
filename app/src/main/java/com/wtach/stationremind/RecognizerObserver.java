@@ -2,10 +2,12 @@ package com.wtach.stationremind;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.baidu.aip.asrwakeup3.core.recog.IStatus.STATUS_FINISHED;
 import static com.baidu.aip.asrwakeup3.core.recog.IStatus.STATUS_LONG_SPEECH_FINISHED;
 import static com.baidu.aip.asrwakeup3.core.recog.IStatus.STATUS_NONE;
@@ -41,11 +44,12 @@ public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
 
     final StringBuffer text = new StringBuffer();
     private CommonDialog dialog;
+    private Handler handler = new Handler();
     private String recoginzeing = "正在识别";
     private RecognizerObserver(Context context){
         if(context != null) {
             recoginzeing = context.getString(R.string.stop_recognizeing);
-            mRecognizerImp = new RecognizerImp(context, this);
+            //mRecognizerImp = new RecognizerImp(context, this);
         }
     }
 
@@ -71,9 +75,10 @@ public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
                 .setSingle(false).setOnClickBottomListener(new CommonDialog.OnClickBottomListener() {
             @Override
             public void onPositiveClick() {
-                if(nameCallBack != null && checkRecognizeContentValid(context,text.toString())){
+                String string = dialog.messageTv.getText().toString().replace("。","");
+                if(nameCallBack != null && checkRecognizeContentValid(context,string)){
+                    nameCallBack.nameComplete(string);
                     dialog.dismiss();
-                    nameCallBack.nameComplete(text.toString());
                 }
             }
 
@@ -82,14 +87,14 @@ public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
                 dialog.dismiss();
             }
         }).show();
-        startRecognizer();
+        /*startRecognizer();
         dialog.messageTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.messageTv.setVisibility(View.GONE);
                 startRecognizer();
             }
-        });
+        });*/
     }
 
     private boolean checkRecognizeContentValid(Context context, String string){
@@ -165,7 +170,7 @@ public class RecognizerObserver implements RecognizerImp.HandleResultCallback {
             mRecognizerImp.start();
         }
         if(dialog != null){
-            dialog.startAnimation();
+            //dialog.startAnimation();
         }
     }
 

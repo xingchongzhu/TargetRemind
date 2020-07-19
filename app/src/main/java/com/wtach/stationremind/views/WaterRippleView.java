@@ -136,7 +136,7 @@ public class WaterRippleView{
     protected void onLayout(boolean changed, int left, int top, int right, int bottom, int width, int height) {
 
         mViewCenterX = width / 2;
-        mViewCenterY = height * 0.6f;
+        mViewCenterY = height * 0.5f;
 
         mWaveEndWidth = Math.min(mViewCenterX,mViewCenterY);
         float waveAreaRadius = mMaxWaveAreaRadius;

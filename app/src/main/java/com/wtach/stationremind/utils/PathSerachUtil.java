@@ -477,7 +477,7 @@ public class PathSerachUtil {
         return nerstStationInfo;
     }
 
-    public static final int MINDIS = 1000;
+    public static final int MINDIS = 600;
 
     public static StationInfo getNerastNextStation(BDLocation location, Map<Integer, LineInfo> mLineInfoList) {
         double min = Double.MAX_VALUE;

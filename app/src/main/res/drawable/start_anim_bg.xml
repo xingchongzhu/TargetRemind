@@ -3,14 +3,14 @@
     <item android:drawable="@android:color/black" />
     <item>
         <bitmap
-            android:gravity="center_vertical|bottom"
+            android:gravity="left|bottom"
             android:scaleType="centerCrop"
             android:src="@drawable/_ic_running"
             android:tileMode="disabled" />
     </item>
     <item>
         <bitmap
-            android:gravity="center"
+            android:gravity="right|bottom"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_train"
             android:tileMode="disabled" />

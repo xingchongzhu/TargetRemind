@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="#000000"
     android:clickable="true"
     android:focusable="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <com.heytap.wearable.support.widget.HeyBackTitleBar
+        android:id="@+id/select_city"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:textColor="@color/item_text_color"
+        android:textSize="@dimen/title_size"
+        app:heyClockColor="#ffffff"
+        app:heyEllipsize="marquee"
+        app:heyText="深圳"
+        app:heyTitleShowIcon="true"
+        android:layout_alignParentTop="true"
+        tools:ignore="MissingConstraints" />
 
     <ViewStub
         android:id="@+id/main_layout"
@@ -13,6 +28,18 @@
         android:layout_height="match_parent">
     </ViewStub>
 
+    <TextView
+        android:id="@+id/hint_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:textColor="@color/text_view_color"
+        android:hint="@string/add_target_hint"
+        android:textSize="@dimen/textvie_item_text_size"
+        >
+
+    </TextView>
     <com.wtach.stationremind.views.ScaleButton
         android:id="@+id/empty_add_btn"
         android:layout_width="70dp"

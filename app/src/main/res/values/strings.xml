@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">识途</string>
-    <string name="secret_declare_title" translatable="false">位置提醒声明</string>
-    <string name="secret_declare_content" translatable="false">“位置提醒” 是用于具体用途的软件。
+    <string name="secret_declare_title" translatable="false">识途声明</string>
+    <string name="secret_declare_content" translatable="false">“识途应用” 是用于定位提醒的软件。
         为了实现上述目的，我们在向您 提供服务时，
-        可能需要使用您的相关信息。OPPO 旨在保护你的个人信息，
+        可能需要使用您的位置相关信息。OPPO 旨在保护你的个人信息，
         我们承诺你的个人信息仅会用于 我们所声明的目的。
         详情请查看应用名称用户协议、应用名称隐私政策。"
     </string>
@@ -38,9 +38,9 @@
     <string name="open_gps_titls" translatable="false">检查GPS或网络</string>
     <string name="open_gps_content" translatable="false">应用需要开启Gps定位功能并且需要连接可用网络</string>
     <string name="start_remind_fail" translatable="false">开启失败，请检查网络或gps是否可用</string>
-    <string name="max_target_count_hint" translatable="false">不能添加更多提醒位置</string>
+    <string name="max_target_count_hint" translatable="false">最多可添加5个位置</string>
 
-    <string name="favorite_list_empty_hint" translatable="false">收藏列表为空</string>
+    <string name="favorite_list_empty_hint" translatable="false">收藏夹列表为空</string>
     <string name="select_target_numbuer" translatable="false">待提醒位置 %d 个</string>
     <string name="name_same_hnit" translatable="false">重复命名</string>
     <string name="name_same_empty_hint" translatable="false">命名不能为空</string>
@@ -48,10 +48,10 @@
     <string name="name_favorite_title" translatable="false">命名</string>
     <string name="default_name" translatable="false">点击命名</string>
     <string name="cancle" translatable="false">取消</string>
-    <string name="favorite_list_title" translatable="false">收藏列表</string>
-    <string name="add_target_hint" translatable="false">点击添加位置提醒</string>
-    <string name="favorite_list_empty" translatable="false">收藏列表为空</string>
+    <string name="favorite_list_title" translatable="false">收藏夹列表</string>
+    <string name="add_target_hint" translatable="false">请添加位置提醒</string>
+    <string name="favorite_list_empty" translatable="false">收藏夹列表为空</string>
     <string name="collect_name_title" translatable="false">收藏夹命名</string>
-    <string name="new_collect_nema" translatable="false">新建命名</string>
+    <string name="new_collect_nema" translatable="false">+新建收藏夹</string>
 </resources>
 

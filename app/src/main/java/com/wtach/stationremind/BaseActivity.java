@@ -89,9 +89,9 @@ public abstract class BaseActivity extends Activity implements RecognizerImp.Han
         if (!hasDeclaredSecretPermission()) {
             secretPermissionDeclareDialog();
         }else {
-        }
-        if(getPersimmions()){
-            checkoutGpsAndNetWork();
+            if(getPersimmions()){
+                checkoutGpsAndNetWork();
+            }
         }
     }
 
@@ -136,23 +136,29 @@ public abstract class BaseActivity extends Activity implements RecognizerImp.Han
     }
 
     protected void secretPermissionDeclareDialog() {
-        HeyDialog.HeyBuilder builder = new HeyDialog.HeyBuilder(getBaseContext());
-        builder.setContentViewStyle(HeyDialog.STYLE_PROTOCOL)
+        HeyDialog.HeyBuilder builder = new HeyDialog.HeyBuilder(this);
+        builder.setContentViewStyle(HeyDialog.STYLE_TITLE_CONTENT)
                 .setTitle(getResources().getString(R.string.secret_declare_title)).
                 setMessage(getResources().getString(R.string.secret_declare_content))
                 .setButtonOrientation(LinearLayout.HORIZONTAL).
                 setSummary(getResources().getString(R.string.secret_declare_enture_hint)).
-                setNegativeButton(getResources().getString(R.string.enture), null).
-                setPositiveButton(getResources().getString(R.string.cancel), new View.OnClickListener() {
+                setNegativeButton(getResources().getString(R.string.enture), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         AppSharePreferenceMgr.put(BaseActivity.this, CommonConst.SECRET_PERMISSION_DECLARE_KEY, true);
-                        Toast.makeText(BaseActivity.this, "隐私申明",
-                                Toast.LENGTH_LONG).show();
+                        if(getPersimmions()){
+                            checkoutGpsAndNetWork();
+                        }
+                    }
+                }).
+                setPositiveButton(getResources().getString(R.string.cancel), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
                         finish();
                     }
                 });
         HeyDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override

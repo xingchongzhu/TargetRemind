@@ -34,18 +34,18 @@
         android:gravity="center_vertical"
         android:layout_gravity="center"
         />
-    <TextView
+    <EditText
         android:id="@+id/message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
         android:lineSpacingExtra="3dp"
         android:lineSpacingMultiplier="1.2"
+        android:background="@drawable/text_dialog_selector"
         android:textSize="14dp"
-        android:visibility="gone"
-        android:textColor="#999999" />
+        android:hint="@string/default_name"
+        android:visibility="visible"
+        android:textColor="#000000" />
 
     <View
         android:layout_width="match_parent"

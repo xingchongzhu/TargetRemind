@@ -5,7 +5,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -41,7 +43,7 @@ import java.util.stream.Collectors;
 import androidx.core.content.ContextCompat;
 
 public class SearchActivity extends BaseActivity implements View.OnClickListener, OnRecyItemClickListener,
-        IStatus{
+        IStatus, TextWatcher {
     private final String TAG = "SearchActivity";
     private HeyBackTitleBar back_titlebar;
     private RecyclerView mRecyclerView;
@@ -122,14 +124,15 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         divider.setDrawable(ContextCompat.getDrawable(this, R.drawable.custom_divider));
         //mRecyclerView.addItemDecoration(divider);
 
-        txtResult.setOnClickListener(this);
-        recordBtn.setOnClickListener(this);
+        //txtResult.setOnClickListener(this);
+        //recordBtn.setOnClickListener(this);
 
-        audioview.setVisibility(View.GONE);
+        //audioview.setVisibility(View.GONE);
         setVoiceIconDrawable(R.drawable.ic_voice_icon);
-        audioview.startAnimation();
+        //audioview.startAnimation();
         initTitleBar();
         initAdapter(null);
+        txtResult.addTextChangedListener(this);
     }
 
     @Override
@@ -238,17 +241,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             case STATUS_FINISHED:
                 if (msg.arg2 == 1) {
                     String result = msg.obj.toString();
-                    /**
-                     * 在您的项目中，keyword为随您的输入变化的值
-                     */
-                    String shpno = CommonFuction.getSharedPreferencesValue(this, CityInfo.CITYNAME);
-                    if (TextUtils.isEmpty(shpno)) {
-                        shpno = IDef.DEFAULTCITY;
-                    }
-                    if(result.length() > 0) {
-                        mSuggestionSearch.requestSuggestion(new SuggestionSearchOption().city(shpno).keyword(result));
-                        txtResult.setText(shpno + " " + result.trim().replace("，", ""));
-                    }
+                    handleResultMessage(result);
                     audioview.setVisibility(View.GONE);
                 }
                 status = msg.what;
@@ -264,6 +257,20 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             default:
                 break;
 
+        }
+    }
+
+    private void handleResultMessage(String result){
+        /**
+         * 在您的项目中，keyword为随您的输入变化的值
+         */
+        String shpno = CommonFuction.getSharedPreferencesValue(this, CityInfo.CITYNAME);
+        if (TextUtils.isEmpty(shpno)) {
+            shpno = IDef.DEFAULTCITY;
+        }
+        if(result.length() > 0) {
+            mSuggestionSearch.requestSuggestion(new SuggestionSearchOption().city(shpno).keyword(result));
+            //txtResult.setText(shpno + " " + result.trim().replace("，", ""));
         }
     }
 
@@ -417,4 +424,18 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         }
     };
 
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        String originText = s.toString();
+        Log.d("zxc","afterTextChanged "+originText);
+        handleResultMessage(originText.replace("。",""));
+    }
 }

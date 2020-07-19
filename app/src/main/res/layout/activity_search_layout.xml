@@ -14,7 +14,7 @@
         app:heyText="@string/seletc_target_station_title"
         android:layout_alignParentTop="true"
         tools:ignore="MissingConstraints" />
-    <TextView
+    <EditText
         android:id="@+id/text_result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         android:drawableRight="@drawable/ic_voice_icon"
         android:hint="@string/start_record_recognize"
         android:textColor="#ffffff"
-        android:clickable="true"
+        android:clickable="false"
         android:singleLine="true"
         android:textSize="@dimen/textvie_item_text_size" />
 
